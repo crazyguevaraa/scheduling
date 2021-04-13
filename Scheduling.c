@@ -16,7 +16,7 @@ typedef struct task_to_do
 	unsigned int mem;
 	unsigned int pid;
 	unsigned int time_act;
-	int 		 status;
+	int 		 status;			// 1 - выполнена, 0 - в очереди, -1 - отклонена
 	int 		 time_before_exec;
 
 }Task;
@@ -87,13 +87,14 @@ Task* EnterTask (Task * FirtsTask);
 //--------------------------------------------------------------
 void to_add_to_queue (Task* newone, List* queue)
 {
-
+	insertL(queue, newone);
+	newone->status = 0;    // попала в очередь на ожидание
 }
 
 //--------------------------------------------------------------
 // отправка задачи в список на выполнение
 //--------------------------------------------------------------
-void to_add_to_execution (Task* to_execute, List* execution)
+void to_add_to_execution (Task* to_execute, List* lst)
 {
 
 }
@@ -101,9 +102,9 @@ void to_add_to_execution (Task* to_execute, List* execution)
 //--------------------------------------------------------------
 //удаление задачи из списка
 //--------------------------------------------------------------
-void to_add_to_execution (Task* to_delete, List* execution)
+void to_delete_a_task (Task* to_delete, List* lst)
 {
-
+	deleteL(lst, to_delete);
 }
 
 //--------------------------------------------------------------
@@ -112,7 +113,8 @@ void to_add_to_execution (Task* to_delete, List* execution)
 void execution (Task* to_do, List* execution)
 {
 	to_do->status = 1;
-	deleteL(execution, to_do);
+	// надо понять, как отсчитать время выполнение задачи
+	to_delete_a_task(to_do, execution);
 }
 
 //--------------------------------------------------------------
