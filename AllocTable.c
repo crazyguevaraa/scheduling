@@ -54,6 +54,8 @@ int EnterValuesFree (int* Memory, AllocPart* AllocTableFree)
 		{
 			AllocTableFree     -> size = FreeArea;     //запись в элемент массива структур размера свободной области
 			return FreeArea;                           //возврат размера свободной области
+		}
+	}
 }
 
 //---------------------------------------------------------------------
