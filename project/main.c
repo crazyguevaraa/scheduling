@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sch.list.c"
+#include "source.c"
 
 
 int main()
