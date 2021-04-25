@@ -42,8 +42,8 @@ int main()
 
                 AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-                GaySortAllocTable (AllocTableEmployed, Amount_of_memory_chunks[0]); //пересортируем куски
-                GaySortAllocTable (AllocTableFree, Amount_of_memory_chunks[1]);     // занятой и свободной памятей
+                GaySortAllocTable (AllocTableEmployed, Amount_of_mem_parts[0]); //пересортируем куски
+                GaySortAllocTable (AllocTableFree, Amount_of_mem_parts[1]);     // занятой и свободной памятей
             }
         }
 
