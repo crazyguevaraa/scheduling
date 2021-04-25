@@ -6,24 +6,51 @@
 
 int main()
 {
-    int M, n, t = 0; // M - количество ячеек памяти, n - общее количество задач, t - время, на протяжении которого выполняется симуляция(в условных единицах)
-   
-    scanf("%d%d%d", &M, &n, &t);
-    
-    Task * StructArray = EnterTask(n);   
+    int Memsize = 0; // M - количество ячеек памяти
+    int TaskNum = 0; // n - общее количество задач
+    int t = 0; // t - время, на протяжении которого выполняется симуляция(в условных единицах)
 
-    int RAM[n] = {0};
+    int* Memory = (int *)calloc(1, Memsize * sizeof(char));  // макет памяти, 1 единица памяти в нашей ОС - 1 char
+    scanf("%d%d%d", &Memsize, &TaskNum, &t);
+    
+    Task * StructArray = EnterTask(TaskNum);   
+
+    int RAM[TaskNum] = {0};
     
     // функция создает лист на ожидание, пихает все задачи в него и возвращает его
-    List * wait_list = wait_list_constructor(n, StructArray);
+    List * wait_list = wait_list_constructor(TaskNum, StructArray, Memsize, t);
 
     // функция создает лист на выполнение и возвращает его
     List * todo_list = createList();
-    
+
+    // создаем массивы указателей на соответсвенно занятые и свободные куски памяти
+    AllocPart* AllocTableEmployed = create_AllocTableEmployed(Memsize);
+    AllocPart* AllocTableFree = create_AllocTableFree(Memory, Memsize);
+
     while(1)
     {
-        // проверяем задачи на возможность впихнуть их в лист на исполнение,
-        // если пихаем задачу в ОП, то удаляем из листа на ожидание, и добавляем в лист на исполнение
+        Task * another_one = wait_list -> head;
+        for (int i = 0; i < TaskNum; i++)
+        {
+            if (another_one -> mem > AllocTableFree -> size)
+            {
+                to_add_to_execution (another_one, todo_list, wait_list);
+                *(AllocTableFree -> point) = 1;
+                another_one -> status = 1;
+
+                AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree); // переформируем куски свободной и заянтой памяти
+
+                //======================================================================================================
+                // Проблемка: я из вне не знаю какой размер у массивов AllocTableEmployed, AllocTableFree,
+                // поэтому не могу отсортировать их используя Sort
+                // Можно как - то использовать локальные переменные FreeAreaNumber и EmployedAreaNumber из AllocTab
+                // и, мб, загонять их в некий статичный массив из двух интов
+                //======================================================================================================
+
+                // GaySortAllocTable (AllocTableEmployed, ???) 
+                // GaySortAllocTable (AllocTableFree, ???)
+            }
+        }
 
         // исполняем одну задачу 
         execution (todo_list -> head -> task, todo_list, &t);
@@ -39,7 +66,9 @@ int main()
             break;   
     }
     
-    // функция полностью удаляет оба списка
+    // функции полностью удаляет оба списка
+    destroyList(wait_list);
+    destroyList(todo_list);
     
     int pid = 0;
     
@@ -49,8 +78,7 @@ int main()
         scanf("%d", &pid);
 
         // функция, которая выводит на экран параметры интересующей задачи 
-        void task_status(int pid, int n, Task * StructArray);
+        task_status(pid, TaskNum, StructArray);
     }
 
     return 0;
-}

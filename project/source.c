@@ -3,6 +3,7 @@
 
 //--------------------------------------------------------------
 //структура задачи
+//--------------------------------------------------------------
 typedef struct  task_to_do{
     unsigned int pid;        //идентификатор задачи
     unsigned int time_act;   //время выполнения задачи
@@ -66,7 +67,8 @@ void insertL(List *lst, void * task){
 
 
 
-List *  destroyList(List * lst){
+List *  destroyList(List * lst)
+{
 	Node *p = lst -> head;
 	Node * prev = 0;
 	while( p )
@@ -208,7 +210,7 @@ void execution (Task* to_do, List* execution, int *time)
     else
     {
         to_do -> status = 3;
-        to_do -> time_act = 0 - *time;
+        to_do -> time_act = 0 - *time; 
     }
   
    /*  нахуй не нужно
@@ -225,13 +227,24 @@ void execution (Task* to_do, List* execution, int *time)
 };
 
 
-List * wait_list_constructor(int n, Task * StructArray)
+// Создает лист на ожидание
+// Сразу выставляет статус 0 задачам, априоре невыполнимым
+List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time)
 {
     List * tmp = createList();
 
     for(int i = 0; i < n; i++)
     {
-        to_add_to_queue(StructArray + i, tmp);
+		if (StructArray[i].mem > Memsize)
+		{
+			StructArray[i].status = 0;
+		}
+		else if (StructArray[i].time_act > time)
+			 {
+			 	 StructArray[i].status = 0;
+			 }
+			 else
+        	 	to_add_to_queue(StructArray + i, tmp);
     }
 
     return tmp;
@@ -241,14 +254,50 @@ List * wait_list_constructor(int n, Task * StructArray)
 
 
 
+
 //--------------------------------------------------------------
 //структура области памяти
-
+//--------------------------------------------------------------
 typedef struct 
 {
 	char * point;                                              //указатель на начало области
 	int size;                                                  //размер области 
 } AllocPart;
+
+
+//--------------------------------------------------------------
+// Функция, выделяющая память под AllocTableEmployed
+// Так как изначально ничего не заполнено, то изначальная память не имеет заполненных кусков
+//--------------------------------------------------------------
+AllocPart* create_AllocTableEmployed (int Memsize)
+{
+	AllocPart* AllocTableEmployed = (AllocPart*)calloc(1, Memsize * sizeof(AllocPart));
+
+	AllocTableEmployed -> size = 0;
+
+	return AllocTableEmployed;
+}
+
+//--------------------------------------------------------------
+// Функция, выделяющая память под AllocTableFree
+// Так как изначально ничего не заполнено, то вся изначальная память - один большой кусок свободной памяти
+//--------------------------------------------------------------
+AllocPart* create_AllocTableFree (char* Memory, int Memsize)
+{
+	AllocPart* AllocTableFree = (AllocPart*)calloc(1, Memsize * sizeof(AllocPart));
+	AllocTableFree -> point   = (char*)Memory;
+	AllocTableFree -> size    = Memsize;
+	return AllocTableFree;
+}
+
+//--------------------------------------------------------------
+// Функция, освобождающая память от обоих AllocTable
+//--------------------------------------------------------------
+void destroyBothAllocTables (AllocPart* AllocTableFree, AllocPart* AllocTableEmployed)
+{
+	free (AllocTableFree);
+	free (AllocTableEmployed);
+}
 
 //---------------------------------------------------------------------
 //занесение данных в таблицу аллокации занятых областей 
@@ -309,11 +358,12 @@ void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, All
 {
 	int FreeAreaNumber = 0;
 	int EmployedAreaNumber = 0;
-	for (int MemoryNumber = 0, FreeAreaNumber = 0, EmployedAreaNumber = 0; MemoryNumber < SizeOfMemory;)
+
+	for (int MemoryNumber = 0; MemoryNumber < SizeOfMemory;)
 	{
 		if (IsEmployed (Memory [MemoryNumber])) 
 		{	
-			int EmployedArea = EnterValuesEmployed (Memory [MemoryNumber], AllocTableEmployed + EmployedAreaNumber );
+			int EmployedArea = EnterValuesEmployed (Memory [MemoryNumber], AllocTableEmployed + EmployedAreaNumber);
 			EmployedAreaNumber++;
 			MemoryNumber += EmployedArea;
 		}
@@ -342,7 +392,8 @@ int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 {
     int Size1 =  MemorySet1 -> size;
     int Size2 =  MemorySet2 -> size;
-	
+ 
+    
     return (Size1 > Size2) - (Size1 < Size2);
 }
 
@@ -352,7 +403,7 @@ int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 
 //-----испр-------------------------------------------------------------
 //swap двух указанных элементов для гей-сортировки
-
+//----------------------------------------------------------------------
 void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 {
     AllocPart  swap_const = *MemoryArea_1;
@@ -365,7 +416,8 @@ void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 
 
 //---------------------------------------------------------------------
-//гей-сортировка 
+//гей-сортировка
+//---------------------------------------------------------------------
 void GaySortAllocTable (AllocPart* AllocTable, int Size)
 {
     int       i          = Size / 2;
@@ -401,40 +453,44 @@ List* MemoryList (AllocPart* AllocTable, int Size)
 void task_status(int pid, int n, Task * StructArray)
 {
 	int i = 0;
+	Task * toshow = 0;
+
     for(i = 0; i < n; i++)
-        if(pid == StructArray[i].pid)
+        if( pid == (StructArray[i].pid) )
         {
             Task * toshow = StructArray + i;
 
             break;
         }
+	if (toshow == 0)
+		printf("Нет задачи с введенным вами идентификационным номером");
+	else
+		switch ( toshow -> status )
+		{
+		case 0:
+			printf("не поступила в очередь\n");
+			break;
+		case 1:
+			printf("в очереди\n");
+			break;
+		
+		case 2:
+			printf("поступила на исполнение\n");
+			break;
 
-    switch (StructArray[i].status)
-    {
-    case 0:
-        printf("не поступила в очередь\n");
-        break;
-    case 1:
-        printf("в очереди\n");
-        break;
-    
-    case 2:
-        printf("поступила на исполнение\n");
-        break;
+		case 3:
+			printf("исполняется, %d\n", StructArray[i].time_act);
+			break;
+		
+		case 4:
+			printf("выполнена\n");
+			break;
 
-     case 3:
-        printf("исполняется, %d\n", StructArray[i].time_act);
-        break;
-    
-     case 4:
-        printf("выполнена\n");
-        break;
-
-     case 5:
-        printf("отклонена\n");
-        break;
-   
-    default:
-        break;
-    }
+		case 5:
+			printf("отклонена\n");
+			break;
+	
+		default:
+			break;
+		}
 }
