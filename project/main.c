@@ -69,6 +69,7 @@ int main()
     // функции полностью удаляет оба списка
     destroyList(wait_list);
     destroyList(todo_list);
+    destroyBothAllocTables(AllocTableFree, AllocTableEmployed);
     
     int pid = 0;
     
