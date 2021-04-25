@@ -354,7 +354,7 @@ int IsEmployed (int* Memory)
 //ПРИНИМАЕТ : указатель на память, размер памяти, указатели на таблицы аллокаций заполненных и пустых областей
 //ВОЗВРАЩАЕТ: НИ-ХУ-Я
 
-void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree)
+void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, int* Amount_of_mem_parts)
 {
 	int FreeAreaNumber = 0;
 	int EmployedAreaNumber = 0;
@@ -375,6 +375,9 @@ void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, All
 		} 
 			
 	}
+
+	Amount_of_mem_parts[0] = EmployedAreaNumber;
+	Amount_of_mem_parts[1] = FreeAreaNumber;
 }
 
 //---------------------------------------------------------------------
@@ -392,13 +395,9 @@ int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 {
     int Size1 =  MemorySet1 -> size;
     int Size2 =  MemorySet2 -> size;
- 
     
     return (Size1 > Size2) - (Size1 < Size2);
 }
-
-
-
 
 
 //-----испр-------------------------------------------------------------
@@ -410,9 +409,6 @@ void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
             *MemoryArea_1 = *MemoryArea_2;
             *MemoryArea_2 = swap_const;
 }
-
-
-
 
 
 //---------------------------------------------------------------------

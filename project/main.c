@@ -10,7 +10,7 @@ int main()
     int TaskNum = 0; // n - общее количество задач
     int t = 0; // t - время, на протяжении которого выполняется симуляция(в условных единицах)
 
-    int* Memory = (int *)calloc(1, Memsize * sizeof(char));  // макет памяти, 1 единица памяти в нашей ОС - 1 char
+    int* Memory = (int *)calloc(1, Memsize * sizeof(char));  // макет памяти, 1 единица памяти в нашей ОС - 1 int
     scanf("%d%d%d", &Memsize, &TaskNum, &t);
     
     Task * StructArray = EnterTask(TaskNum);   
@@ -27,6 +27,8 @@ int main()
     AllocPart* AllocTableEmployed = create_AllocTableEmployed(Memsize);
     AllocPart* AllocTableFree = create_AllocTableFree(Memory, Memsize);
 
+    int Amount_of_mem_parts [2] = { 0 }; // 1 элемент - количество кусков занятой памяти, 2 - количество кусков свободной памяти
+
     while(1)
     {
         Task * another_one = wait_list -> head;
@@ -38,17 +40,10 @@ int main()
                 *(AllocTableFree -> point) = 1;
                 another_one -> status = 1;
 
-                AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree); // переформируем куски свободной и заянтой памяти
+                AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-                //======================================================================================================
-                // Проблемка: я из вне не знаю какой размер у массивов AllocTableEmployed, AllocTableFree,
-                // поэтому не могу отсортировать их используя Sort
-                // Можно как - то использовать локальные переменные FreeAreaNumber и EmployedAreaNumber из AllocTab
-                // и, мб, загонять их в некий статичный массив из двух интов
-                //======================================================================================================
-
-                // GaySortAllocTable (AllocTableEmployed, ???) 
-                // GaySortAllocTable (AllocTableFree, ???)
+                GaySortAllocTable (AllocTableEmployed, Amount_of_memory_chunks[0]); //пересортируем куски
+                GaySortAllocTable (AllocTableFree, Amount_of_memory_chunks[1]);     // занятой и свободной памятей
             }
         }
 
