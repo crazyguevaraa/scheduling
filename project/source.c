@@ -8,7 +8,7 @@ typedef struct  task_to_do{
     unsigned int time_act;   //время выполнения задачи
     unsigned int mem;        //количество памяти, нужное для размещения задачи
     unsigned int time_wait;  //время ожидания
-    unsigned int status = 0;     //статус
+    unsigned int status;     //статус
 }Task;
 
 
@@ -201,14 +201,14 @@ void to_delete_a_task (Task* to_delete, List* lst)
 //--------------------------------------------------------------
 void execution (Task* to_do, List* execution, int *time)
 {
-	time -= to_do -> time_act;
+	*time -= to_do -> time_act;
     
     if(time >= 0)
         to_do -> status = 4;
     else
     {
         to_do -> status = 3;
-        to_do -> time_act = 0 - time; 
+        to_do -> time_act = 0 - *time;
     }
   
    /*  нахуй не нужно
@@ -227,11 +227,11 @@ void execution (Task* to_do, List* execution, int *time)
 
 List * wait_list_constructor(int n, Task * StructArray)
 {
-    tmp = List *createList();
+    List * tmp = createList();
 
     for(int i = 0; i < n; i++)
     {
-        to_add_to_queue(StructArray[i], tmp);
+        to_add_to_queue(StructArray + i, tmp);
     }
 
     return tmp;
@@ -266,6 +266,7 @@ int EnterValuesEmployed (int* Memory, AllocPart* AllocTableEmployed)
 			AllocTableEmployed -> size = EmployedArea; //запись в элемент массива структур размера области
 			return EmployedArea;                       //возврат размера занятой области
 		}
+	}
 }
 
 //---------------------------------------------------------------------
@@ -306,17 +307,19 @@ int IsEmployed (int* Memory)
 
 void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree)
 {
-	for (int MemoryNumber = 0, int FreeAreaNumber = 0, int EmployedAreaNumber = 0; MemoryNumber < SizeOfMemory;)
+	int FreeAreaNumber = 0;
+	int EmployedAreaNumber = 0;
+	for (int MemoryNumber = 0, FreeAreaNumber = 0, EmployedAreaNumber = 0; MemoryNumber < SizeOfMemory;)
 	{
 		if (IsEmployed (Memory [MemoryNumber])) 
 		{	
-			int EmployedArea = EnterValuesEmployed (Memory [MemoryNumber], AllocTableEmployed [EmployedAreaNumber]);
+			int EmployedArea = EnterValuesEmployed (Memory [MemoryNumber], AllocTableEmployed + EmployedAreaNumber );
 			EmployedAreaNumber++;
 			MemoryNumber += EmployedArea;
 		}
 		else
 		{
-			int FreeArea = EnterValuesFree (Memory [MemoryNumber], AllocTableFree [FreeAreaNumber]);
+			int FreeArea = EnterValuesFree (Memory [MemoryNumber], AllocTableFree + FreeAreaNumber);
 			FreeAreaNumber++;
 			MemoryNumber += FreeArea;
 		} 
@@ -335,16 +338,11 @@ void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, All
 //НАХУЙ НЕ НУЖНА
 //upd.: все таки нужна блинб(((
 
-int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySize2)
+int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 {
     int Size1 =  MemorySet1 -> size;
     int Size2 =  MemorySet2 -> size;
- 
-    while (*Size1 == *Size2 && *Size1 != '\0' && *Size2 != '\0')
-    {
-      Size1 = (MemorySet1++) -> size;
-      Size2 = (MemorySet2++) -> size;
-    }
+	
     return (Size1 > Size2) - (Size1 < Size2);
 }
 
@@ -370,10 +368,10 @@ void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 //гей-сортировка 
 void GaySortAllocTable (AllocPart* AllocTable, int Size)
 {
-    int       i         = Size / 2;
-    AllocPart ptr_left  = AllocTable[1];
-    AllocPart ptr_right = AllocTable[size_arr_1 - 1];
-    AllocPart ptr_pivot = AllocPart[i];
+    int       i          = Size / 2;
+    AllocPart* ptr_left  = AllocTable + 1;
+    AllocPart* ptr_right = AllocTable + Size - 1;
+    AllocPart* ptr_pivot = AllocTable + i;
     
     for(unsigned long long int k = 0, j = Size - 1; k < j; i++, j--)
     {
@@ -402,15 +400,16 @@ List* MemoryList (AllocPart* AllocTable, int Size)
 
 void task_status(int pid, int n, Task * StructArray)
 {
-    for(int i = 0; i < n; i++)
-        if(pid == StructArray[i] -> pid)
+	int i = 0;
+    for(i = 0; i < n; i++)
+        if(pid == StructArray[i].pid)
         {
-            Task * toshow = StructArray[i];
+            Task * toshow = StructArray + i;
 
             break;
         }
 
-    switch (StructArray[i] -> status)
+    switch (StructArray[i].status)
     {
     case 0:
         printf("не поступила в очередь\n");
@@ -424,7 +423,7 @@ void task_status(int pid, int n, Task * StructArray)
         break;
 
      case 3:
-        printf("исполняется, %d\n", StructArray[i] -> time_act);
+        printf("исполняется, %d\n", StructArray[i].time_act);
         break;
     
      case 4:

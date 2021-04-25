@@ -15,10 +15,10 @@ int main()
     int RAM[n] = {0};
     
     // функция создает лист на ожидание, пихает все задачи в него и возвращает его
-    wait_list = wait_list_constructor(n, StructArray);
+    List * wait_list = wait_list_constructor(n, StructArray);
 
     // функция создает лист на выполнение и возвращает его
-    todo_list = List *createList();
+    List * todo_list = createList();
     
     while(1)
     {
@@ -29,13 +29,13 @@ int main()
         execution (todo_list -> head -> task, todo_list, &t);
 
         // удаляем выполненную задачу из ОП и листа на исполнения
-        void to_delete_a_task (todo_list -> head -> task, todo_list);
+        to_delete_a_task (todo_list -> head -> task, todo_list);
         
         // прерывание цикла если истекло время, либо если все задачи выполнены
         if(t <= 0)
             break;
 
-        if(todo_list -> head = 0 && todo_list -> tail = 0)
+        if(todo_list -> head == 0 && todo_list -> tail == 0)
             break;   
     }
     
