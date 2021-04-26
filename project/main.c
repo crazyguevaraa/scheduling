@@ -58,22 +58,26 @@ int main()
         if(todo_list -> head == 0 && todo_list -> tail == 0)
             break;   
     }
-    
-    // функции полностью удаляют оба списка и таблицы
-    destroyList(wait_list);
-    destroyList(todo_list);
-    destroyBothAllocTables(AllocTableFree, AllocTableEmployed);
-    
+
+
+
     int pid = 0;
     
     while(1)
-    {
-        
+    { 
         scanf("%d", &pid);
+
+        if(pid == 0)
+            break;
 
         // функция, которая выводит на экран параметры интересующей задачи 
         task_status(pid, TaskNum, StructArray);
     }
 
+    // функции полностью удаляют оба списка и таблицы
+    destroyList(wait_list);
+    destroyList(todo_list);
+    destroyBothAllocTables(AllocTableFree, AllocTableEmployed);
+    
     return 0;
 }
