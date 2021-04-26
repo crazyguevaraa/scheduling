@@ -439,12 +439,14 @@ void task_status(int pid, int n, Task * StructArray)
 	Task * toshow = 0;
 
     for(i = 0; i < n; i++)
-        if( pid == (StructArray[i].pid) )
+	{
+        if(pid == StructArray[i].pid)
         {
-            Task * toshow = StructArray + i;
-
+            toshow = &StructArray[i];
             break;
         }
+    }
+	
 	if (toshow == 0)
 		printf("Нет задачи с введенным вами идентификационным номером");
 	else
