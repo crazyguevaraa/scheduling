@@ -33,23 +33,12 @@ List *createList(){
 };
 
 
-void printList(List *lst){
-	printf("print:\n");
-	Node *p = lst -> head;
-	while( p ){
-		if(p -> next)
-			printf("%hhu->", *(p -> task));
-		else
-			printf("%hhu\n", *(p -> task));
-		p = p -> next;
-	}
-	printf("end\n");
-}
 
-void insertL(List *lst, void * task){
+void insertL(List *lst, Task * task)
+{
 	if( !lst -> head){
 		Node * newN =  (Node *)calloc(1, sizeof(Node));
-		newN -> task = (char *)task;
+		newN -> task = task;
 		newN -> prev = 0;
 		newN -> next = 0;
 		lst -> tail = newN;
@@ -57,7 +46,7 @@ void insertL(List *lst, void * task){
 		return;
 	}
 	Node * p = (Node *)calloc(1, sizeof(Node));
-	p -> task = (char *)task;
+	p -> task = task;
 	p -> next = 0;
 	p -> prev = lst -> tail;
 	lst -> tail -> next = p;
@@ -81,56 +70,12 @@ List *  destroyList(List * lst)
 	return 0;
 };
 
-// Вставить элемет перед
-void insertBefore(List * lst, Node * point, char * task)
+
+
+
+
+void deleteL(List *lst, Node * del)
 {
-    Node* pointer;
-
-    while ( (pointer -> next != point) & (pointer != lst -> tail) )
-    {
-        pointer = pointer -> next;
-    }
-
-    if (pointer == lst -> tail)
-    {
-        printf("There is no node in list with such adress\n");
-        return;
-    }
-    
-    Node* new = (Node *)calloc(1, sizeof(Node *));
-	
-    new -> task = task;
-
-    new -> prev = pointer->prev;
-
-	new -> next = pointer;
-}
-
-// Вставить перед.
-void insertAfter(List *lst, Node * point, char * task)
-{
-    Node* pointer;
-
-    while ( (pointer -> next != point) & (pointer != lst -> tail) )
-    {
-        pointer = pointer -> next;
-    }
-
-    if (pointer == lst -> tail)
-    {
-        printf("There is no node in list with such adress\n");
-        return;
-    }
-    
-    Node* new = (Node *)calloc(1, sizeof(Node *));
-    new->task = task;
-
-    new -> next = point -> next;
-
-    point -> next = new;
-}
-
-void deleteL(List *lst, Node * del){
 //	printf("del: %p %hhu\n", del, *(del->task));
 	if(!del)
 		return;
@@ -180,6 +125,37 @@ void to_add_to_queue (Task* newone, List* queue)
 	newone -> status = 1;    // попала в очередь на ожидание
 };
 
+
+//--------------------------------------------------------------
+//удаление задачи из списка
+//--------------------------------------------------------------
+void to_delete_a_task (Task* to_delete, List* lst)
+{
+	Node * Node_to_delete;
+	Node * p = lst -> head;
+	
+	while(1)
+	{
+        if(p -> task == to_delete)
+		{
+			Node_to_delete = p;
+			break;
+		} 
+		else
+		{
+			if (p != lst -> tail)
+			    p = p -> next;
+			else
+			    break;
+		}   
+	}
+	
+	
+	deleteL(lst, Node_to_delete);
+};
+
+
+
 //--------------------------------------------------------------
 // отправка задачи в список на выполнение
 //--------------------------------------------------------------
@@ -190,13 +166,6 @@ void to_add_to_execution (Task* to_execute, List* lst, List* queue)
     to_delete_a_task(to_execute, queue); 
 };
 
-//--------------------------------------------------------------
-//удаление задачи из списка
-//--------------------------------------------------------------
-void to_delete_a_task (Task* to_delete, List* lst)
-{
-	deleteL(lst, to_delete);
-};
 
 //--------------------------------------------------------------
 //выполнение задачи
@@ -225,6 +194,24 @@ void execution (Task* to_do, List* execution, int *time)
 	
     to_delete_a_task(to_do, execution); 
 };
+
+
+//--------------------------------------------------------------
+//ввод задачи
+//--------------------------------------------------------------
+Task * EnterTask (int n)  // Принимает на вход количество задач, возвращает массив структур Task
+{
+	Task * structArray = (Task * )calloc(n, sizeof(Task));
+
+    for(int i = 0; i < n; i++)
+    {
+	    printf ("Введите параметры задачи %d:\n", i);
+        scanf("%d %d %d %d", &structArray[i].pid, &structArray[i].mem, &structArray[i].time_act, &structArray[i].time_wait);
+    }
+
+    return structArray;
+};
+
 
 
 // Создает лист на ожидание
