@@ -14,8 +14,6 @@ int main()
     scanf("%d%d%d", &Memsize, &TaskNum, &t);
     
     Task * StructArray = EnterTask(TaskNum);   
-
-    int RAM[TaskNum] = {0};
     
     // функция создает лист на ожидание, пихает все задачи в него и возвращает его
     List * wait_list = wait_list_constructor(TaskNum, StructArray, Memsize, t);
@@ -31,7 +29,7 @@ int main()
 
     while(1)
     {
-        Task * another_one = wait_list -> head;
+        Task * another_one = wait_list -> head -> task;
         for (int i = 0; i < TaskNum; i++)
         {
             if (another_one -> mem > AllocTableFree -> size)
@@ -61,7 +59,7 @@ int main()
             break;   
     }
     
-    // функции полностью удаляет оба списка
+    // функции полностью удаляют оба списка и таблицы
     destroyList(wait_list);
     destroyList(todo_list);
     destroyBothAllocTables(AllocTableFree, AllocTableEmployed);
@@ -78,3 +76,4 @@ int main()
     }
 
     return 0;
+}
