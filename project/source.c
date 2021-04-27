@@ -392,9 +392,9 @@ int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 //----------------------------------------------------------------------
 void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 {
-    AllocPart  swap_const = *MemoryArea_1;
-            *MemoryArea_1 = *MemoryArea_2;
-            *MemoryArea_2 = swap_const;
+    AllocPart*  swap_const = MemoryArea_1;
+            	MemoryArea_1 = MemoryArea_2;
+            	MemoryArea_2 = swap_const;
 }
 
 
@@ -421,10 +421,72 @@ void GaySortAllocTable (AllocPart* AllocTable, int Size)
     GaySortAllocTable (AllocTable + i, Size - i);
 }
 
+//-----------------------------------------------------------------------------
+// Данная фигня должна в уже отсортированном по размеру массиве AllocTable
+// отсортировать одинаковые по размеру куски по адресам от меньшего к большему
+// Данная функция отбирает группы кусков с одинаковым размером и отсылает их
+// на сортировку по адресу 
+//-----------------------------------------------------------------------------
+void PrepforAddressSort (AllocPart* AllocTable, int Memsize)
+{
+    for (int i = 0; i < Memsize; i++)
+	{
+		int same_size = 1; 										// счетчик кусков с одинаковым размером, самый первый кусок сразу считаем
+
+		while ( (AllocTable[i].size == AllocTable[i + 1].size))  // смотрим, является ли следующий кусок одинаковым по размеру
+		{
+			same_size++;										// Если да, то увеличиваем счетчик
+		}
+		if (same_size != 1)										// Если кроме данного куска еще хотя бы один имеет такой же размер, сортируем
+		{
+			AddressSortAllocTable(AllocTable + i, same_size);
+		}
+		i += same_size;											// все куски от данного до отстоящего на same_size уже отсортировали, второй раз по ним прогонять нет смысла
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Компаратар адресов
+// Просто сравниваем адреса, на которые указывают allocpart'ы как числа
+//-----------------------------------------------------------------------------
+int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
+{
+    int address1 =  MemorySet1 -> point;
+    int address2 =  MemorySet2 -> point;
+    
+    return (address1 > address2) - (address1 < address2);
+}
+
+
+//---------------------------------------------------------------------
+// сортировка по адресам
+// Также как и по размеру, только компратор другой
+//---------------------------------------------------------------------
+void AddressSortAllocTable (AllocPart* AllocTable, int Size)
+{
+    int       i          = Size / 2;
+    AllocPart* ptr_left  = AllocTable + 1;
+    AllocPart* ptr_right = AllocTable + Size - 1;
+    AllocPart* ptr_pivot = AllocTable + i;
+    
+    for(unsigned long long int k = 0, j = Size - 1; k < j; i++, j--)
+    {
+        while(address_compar_str(ptr_left, ptr_pivot))
+            ptr_left++;
+        while(address_compar_str(ptr_pivot, ptr_right))
+            ptr_right--;
+        
+        GaySwapAllocPart (ptr_left, ptr_right);
+    }
+
+    AddressSortAllocTable (AllocTable, i);
+    AddressSortAllocTable (AllocTable + i, Size - i);
+}
+
 //---------------------------------------------------------------------
 //создание листа с отсортирорванными областями памяти 
 //и запихуивание туда элементов отсортированного массива структур
-
+//---------------------------------------------------------------------
 List* MemoryList (AllocPart* AllocTable, int Size)
 {
 	List* MemoryList = createList();
