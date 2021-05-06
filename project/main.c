@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "source.c"
+
 
 
 int main()
@@ -88,9 +88,6 @@ int main()
 
 
 #define SIZE 10
-
-#include <stdio.h>
-#include <stdlib.h>
 
 //int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
 //void AddressSortAllocTable (AllocPart AllocTable, int Size);
