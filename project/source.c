@@ -1,5 +1,10 @@
 #define SIZE 10
 
+#include <stdio.h>
+#include <stdlib.h>
+
+//int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
+//void AddressSortAllocTable (AllocPart AllocTable, int Size);
 
 //--------------------------------------------------------------
 //структура задачи
@@ -25,6 +30,9 @@ typedef struct Lst
 	Node *head;
 	Node *tail;
 }List;
+
+//int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
+//void AddressSortAllocTable (AllocPart* AllocTable, int Size);
 
 
 List *createList(){
@@ -252,6 +260,17 @@ typedef struct
 } AllocPart;
 
 
+
+
+int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
+void AddressSortAllocTable (AllocPart* AllocTable, int Size);
+
+
+
+
+
+
+
 //--------------------------------------------------------------
 // Функция, выделяющая память под AllocTableEmployed
 // Так как изначально ничего не заполнено, то изначальная память не имеет заполненных кусков
@@ -410,9 +429,9 @@ void GaySortAllocTable (AllocPart* AllocTable, int Size)
     
     for(unsigned long long int k = 0, j = Size - 1; k < j; i++, j--)
     {
-        while(gay_compar_str(ptr_left, ptr_pivot))
+        while(GayCompareAllocTable(ptr_left, ptr_pivot))
             ptr_left++;
-        while(gay_compar_str(ptr_pivot, ptr_right))
+        while(GayCompareAllocTable(ptr_pivot, ptr_right))
             ptr_right--;
         
         GaySwapAllocPart (ptr_left, ptr_right);
@@ -471,9 +490,9 @@ void AddressSortAllocTable (AllocPart* AllocTable, int Size)
     
     for(unsigned long long int k = 0, j = Size - 1; k < j; i++, j--)
     {
-        while(address_compar_str(ptr_left, ptr_pivot))
+        while(AddressCompareAllocTable(ptr_left, ptr_pivot))
             ptr_left++;
-        while(address_compar_str(ptr_pivot, ptr_right))
+        while(AddressCompareAllocTable(ptr_pivot, ptr_right))
             ptr_right--;
         
         GaySwapAllocPart (ptr_left, ptr_right);
