@@ -23,8 +23,6 @@ int main()
 
     Task * StructArray = EnterTask(TaskNum);
 
-	printMemory(Memory, Memsize);
-
 	TaskSortAllocTable(StructArray, 0, TaskNum - 1);
 
     // функция создает лист на ожидание, пихает все задачи в него и возвращает его
@@ -37,23 +35,31 @@ int main()
     AllocPart* AllocTableEmployed = create_AllocTableEmployed(Memsize);
     AllocPart* AllocTableFree = create_AllocTableFree(Memory, Memsize);
 
-    int Amount_of_mem_parts [2] = { 0 }; // 1 элемент - количество кусков занятой памяти, 2 - количество кусков свободной памяти
+    int Amount_of_mem_parts [2] = { 0, 1 }; // 1 элемент - количество кусков занятой памяти, 2 - количество кусков свободной памяти
 
-	Node* new = wait_list -> head;
+	Node* newnode = wait_list -> head;
 
-	int Taskleft = TaskNum;
+	int Taskwaiting = TaskNum;
+
+    int iteration = 0;
+
+    Memory[Memsize - 1] = 0;
 
     while(1)
     {
+        
+        //printf("At the start\n");
+
 		int i = 0;
 
+        //printf("Before cycle, pid of task = %d", newnode -> task -> pid);
         
-        for (i = 0; i < Taskleft; i++)
+        for (i = 0; i < Taskwaiting; i++)
         {
-			Task * another_one = new -> task;
-            if ( (another_one -> mem) < (AllocTableFree -> size) )
+            if ( (newnode -> task -> mem) < (AllocTableFree -> size) )
             {
-	
+                Task * another_one = newnode -> task;
+
                 to_add_to_execution (another_one, todo_list, wait_list);
 
 				printMemory(Memory, Memsize);
@@ -72,32 +78,45 @@ int main()
 
                 another_one -> status = 1;
 
-				printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
+				//printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
 				
                 AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-				printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
+                printAlloctable (AllocTableFree, Amount_of_mem_parts[1]);
 
                 GaySortAllocTable (AllocTableEmployed, 0, Amount_of_mem_parts[0]);  //пересортируем куски
                 GaySortAllocTable (AllocTableFree, 0, Amount_of_mem_parts[1]);      //занятой и свободной памятей
-            }
 
-			if (new -> next)
-				new = new -> next;
+                printAlloctable (AllocTableFree, Amount_of_mem_parts[1]);
+
+                Taskwaiting -= 1;
+                
+            }
+            if (newnode -> next)
+                {
+                    newnode = newnode -> next;
+                    printf("pid of new task = %d\n", newnode->task->pid);
+                }
+
+			
+				
         }
 
-		Taskleft -= i;
+
 
 
         // исполняем одну задачу
         execution (todo_list -> head -> task, todo_list, &t);
 
+        AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+
+        GaySortAllocTable (AllocTableEmployed, 0, Amount_of_mem_parts[0]);  //пересортируем куски
+        GaySortAllocTable (AllocTableFree, 0, Amount_of_mem_parts[1]);      //занятой и свободной памятей
+
 		printMemory(Memory, Memsize);
 
         // удаляем выполненную задачу из ОП и листа на исполнения
         //to_delete_a_task (todo_list -> head -> task, todo_list);
-
-
 
         // прерывание цикла если истекло время, либо если все задачи выполнены
         if(t <= 0)
@@ -105,6 +124,9 @@ int main()
 
         if(wait_list -> head == 0 && wait_list -> tail == 0 && todo_list -> head ==  0 && todo_list -> tail == 0)
             break;
+
+        iteration++;
+        printf("\niteration = %d, pid of next task = %d\n", iteration, newnode->task->pid);
     }
 
 
@@ -127,6 +149,8 @@ int main()
     destroyList(wait_list);
     destroyList(todo_list);
     destroyBothAllocTables(AllocTableFree, AllocTableEmployed);
+    free(Memory);
+    free(StructArray);
 
     return 0;
 }
