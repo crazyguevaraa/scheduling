@@ -7,14 +7,17 @@ int EnterValuesEmployed (int* Memory, int allowedMem ,AllocPart* AllocTableEmplo
 int EnterValuesFree (int* Memory, int allowedMem ,AllocPart* AllocTableFree);
 int IsEmployed (int* Memory);
 void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, int* Amount_of_mem_parts);
+void processMemory(int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, int* Amount_of_mem_parts);
 
 //--------------------------------------------------------------
 // Функция, выделяющая память под AllocTableEmployed
 // Так как изначально ничего не заполнено, то изначальная память не имеет заполненных кусков
+// Принимает размер памяти
+// Возвращает массив занятых Allopart - ов
 //--------------------------------------------------------------
 AllocPart* create_AllocTableEmployed (int Memsize)
 {
-	AllocPart* AllocTableEmployed = (AllocPart*)calloc(1, Memsize * sizeof(AllocPart));
+	AllocPart* AllocTableEmployed = (AllocPart*)calloc(1, Memsize * sizeof(AllocPart)); // Выделяем память
 
 	AllocTableEmployed -> size = 0;
 
@@ -24,17 +27,21 @@ AllocPart* create_AllocTableEmployed (int Memsize)
 //--------------------------------------------------------------
 // Функция, выделяющая память под AllocTableFree
 // Так как изначально ничего не заполнено, то вся изначальная память - один большой кусок свободной памяти
+// Принимает указатель на память, её размер
+// Возвращает массив свободных Allopart - ов
 //--------------------------------------------------------------
 AllocPart* create_AllocTableFree (int* Memory, int Memsize)
 {
-	AllocPart* AllocTableFree = (AllocPart*)calloc(1, Memsize * sizeof(AllocPart));
-	AllocTableFree -> point   = Memory;
-	AllocTableFree -> size    = Memsize;
+	AllocPart* AllocTableFree = (AllocPart*)calloc(1, Memsize * sizeof(AllocPart)); // Выделяем память
+	AllocTableFree -> point   = Memory;												// Начало свободной памяти - начало памяти
+	AllocTableFree -> size    = Memsize;											// Размер свободного куска - вся память, так как она еще не занята
 	return AllocTableFree;
 }
 
 //--------------------------------------------------------------
 // Функция, освобождающая память от обоих AllocTable
+// Принимает  Таблицы аллокаций
+// Возвращает ничего
 //--------------------------------------------------------------
 void destroyBothAllocTables (AllocPart* AllocTableFree, AllocPart* AllocTableEmployed)
 {
@@ -43,9 +50,9 @@ void destroyBothAllocTables (AllocPart* AllocTableFree, AllocPart* AllocTableEmp
 }
 
 //---------------------------------------------------------------------
-//занесение данных в таблицу аллокации занятых областей
-//ПРИНИМАЕТ:  указатель на память, указатель на таблицу аллокации занятых областей
-//ВОЗВРАЩАЕТ: размер занятой области (в ячейках)
+// занесение данных в таблицу аллокации занятых областей
+// Принимает  указатель на память, указатель на таблицу аллокации занятых областей
+// Возвращает размер занятой области (в ячейках)
 //--------------------------------------------------------------
 
 int EnterValuesEmployed (int* Memory, int allowedMem ,AllocPart* AllocTableEmployed)
@@ -67,9 +74,9 @@ int EnterValuesEmployed (int* Memory, int allowedMem ,AllocPart* AllocTableEmplo
 
 //---------------------------------------------------------------------
 //занесение данных в таблицу аллокации пустых областей
-//ПРИНИМАЕТ : указатель на память, указатель на таблицу аллокации пустых областей
-//ВОЗВРАЩАЕТ: размер пустой области (В ячейках)
-
+//Принимает : указатель на память, указатель на таблицу аллокации пустых областей
+//Возвращает размер пустой области (В ячейках)
+//---------------------------------------------------------------------
 int EnterValuesFree (int* Memory, int allowedMem ,AllocPart* AllocTableFree)
 {
 	int FreeArea = 0;
@@ -90,8 +97,8 @@ int EnterValuesFree (int* Memory, int allowedMem ,AllocPart* AllocTableFree)
 
 //---------------------------------------------------------------------
 //проверка на заполненность области
-//ПРИНИМАЕТ : указатель на память
-//ВОЗВРАЩАЕТ: единицу если ячейка заполнена и ноль если ячейка пуста
+//Принимает : указатель на память
+//Возвращает единицу если ячейка заполнена и ноль если ячейка пуста
 //--------------------------------------------------------------
 
 int IsEmployed (int* Memory)
@@ -102,27 +109,30 @@ int IsEmployed (int* Memory)
 
 //---------------------------------------------------------------------
 //Создание таблицы аллокаций
-//ПРИНИМАЕТ : указатель на память, размер памяти, указатели на таблицы аллокаций заполненных и пустых областей
-//ВОЗВРАЩАЕТ: НИ-ХУ-Я
+//Принимает : указатель на память, размер памяти, указатели на таблицы аллокаций заполненных и пустых областей,
+//			  массив, куда запишутся количества кусков свободной и занятой памятей
+//Возвращает ничего
 //--------------------------------------------------------------
 
 void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, int* Amount_of_mem_parts)
 {
 	
-	int FreeAreaNumber = 0;
-	int EmployedAreaNumber = 0;
+	int FreeAreaNumber = 0;				// количество цельных кусков свободной памяти
+	int EmployedAreaNumber = 0;			// количество цельных кусков занятой памяти
 
-	for (int MemoryNumber = 0; MemoryNumber < SizeOfMemory;)
+	for (int MemoryNumber = 0; MemoryNumber < SizeOfMemory;) // пробегаемся по памяти
 	{
 		
-		if (IsEmployed (Memory + MemoryNumber)) 
+		if (IsEmployed (Memory + MemoryNumber)) // Если нашли занятую ячейку, то от нее отсчитываем сколько подряд занятых,
+												// и записываем указатель на эту область памяти и ее размер в AllocTableEmployed 
 		{	
 			int EmployedArea = EnterValuesEmployed (Memory + MemoryNumber, SizeOfMemory - MemoryNumber ,AllocTableEmployed + EmployedAreaNumber);
             
-			EmployedAreaNumber++;
-			MemoryNumber += EmployedArea;
+			EmployedAreaNumber++;				// Записываем, что нашелся кусок занятой памяти
+			MemoryNumber += EmployedArea;		// Весь кусок памяти от данного MemoryNumber до MemoryNumber + EmployedArea обработан, поэтому
+												// мы его пропускаем далее в цикле
 		}
-		else
+		else									//Аналогично с найденной свободной ячейкой
 		{    
 			int FreeArea = EnterValuesFree (Memory + MemoryNumber, SizeOfMemory - MemoryNumber,AllocTableFree + FreeAreaNumber);
         
@@ -132,6 +142,21 @@ void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, All
 			
 	}
 
-	Amount_of_mem_parts[0] = EmployedAreaNumber;
-	Amount_of_mem_parts[1] = FreeAreaNumber;
+	Amount_of_mem_parts[0] = EmployedAreaNumber; // записываем в массив количество занятых и 
+	Amount_of_mem_parts[1] = FreeAreaNumber;	 //	свободных кусков
+}
+
+//------------------------------------------------------------------------------
+// Функция обрабатывает состояние памяти
+// Принимает указатель на начало памяти и её размер, указатели на массив
+// 			  Allocpart-ов, массив из количества цельных кусков свободной и занятой памяти
+// Возвращает ничего 
+//------------------------------------------------------------------------------
+void processMemory(int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, int* Amount_of_mem_parts)
+{
+    AllocTab (Memory, SizeOfMemory, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+
+    MemSortAllocTable (AllocTableEmployed, 0, Amount_of_mem_parts[0]);  //пересортируем куски
+    MemSortAllocTable (AllocTableFree, 0, Amount_of_mem_parts[1]);      //занятой и свободной памятей
+
 }

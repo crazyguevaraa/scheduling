@@ -5,11 +5,8 @@
 #include "print.h"
 #include "list.h"
 #include "task.h"
-#include "alloctable.h"
 #include "sort.h"
-
-
-
+#include "alloctable.h"
 
 int main()
 {
@@ -21,11 +18,11 @@ int main()
 
 	int* Memory = (int *)calloc(1, Memsize * sizeof(int));  // макет памяти, 1 единица памяти в нашей ОС - 1 int
 
-    Task * StructArray = EnterTask(TaskNum);
+    Task * StructArray = EnterTask(TaskNum);                // создаем массив задач
 
-	TaskSortAllocTable(StructArray, 0, TaskNum - 1);
+	TaskSortAllocTable(StructArray, 0, TaskNum - 1);        // сортируем его по времени поступления в Процессор (т. е. по параметру time_wait)
 
-    // функция создает лист на ожидание, пихает все задачи в него и возвращает его
+    // функция создает лист на ожидание, заполняет его задачами и возвращает его
     List * wait_list = wait_list_constructor(TaskNum, StructArray, Memsize, t);
 
     // функция создает лист на выполнение и возвращает его
@@ -37,65 +34,57 @@ int main()
 
     int Amount_of_mem_parts [2] = { 0, 1 }; // 1 элемент - количество кусков занятой памяти, 2 - количество кусков свободной памяти
 
-	Node* newnode = wait_list -> head;
+	Node* newnode_with_task = wait_list -> head;   // Создаем ноду с очередной задачей
 
-	int Taskwaiting = TaskNum;
+	int Taskwaiting = TaskNum;                     // количество задач, не поступивших в список на исполнение
 
-    int iteration = 0;
-
-    Memory[Memsize - 1] = 0;
+    int TaskPut = 0;                               // Количество задач, положенных в память и в список на выполнение в данной итерации цикла
 
     while(1)
     {
+        if (wait_list -> head)                     // При первом прогоне это просто ничего не меняет        
+        {                                          // Когда уже некоторые задачи были положены в to_do list, они удаляются из wait_list
+            newnode_with_task = wait_list -> head; // поэтому newnode смотрит на нулевой указатель. Поэтому, переставляем его на первую ноду из 
+        }                                          // wait_list    
+            
         
-        //printf("At the start\n");
+        for (int i = 0; i < Taskwaiting; i++)       // Пробегаемся по листу wait_list и смотрим, можем ли оставшиеся задачи положить в память
+        {                                           // И в to_do list
 
-		int i = 0;
+            if ( (newnode_with_task -> task -> mem) <= (AllocTableFree -> size) )   // Смотрим, можно ли задачу положить в память,
+            {                                                                       // так как AllocTableFree впоследствии сортируется, достаточно посмотреть на первый его элемент
+                
+                Task * another_one = newnode_with_task -> task;                     // Если положить можно, то вытаскиваем из ноды указатель на задачу
 
-        //printf("Before cycle, pid of task = %d", newnode -> task -> pid);
-        
-        for (i = 0; i < Taskwaiting; i++)
-        {
-            if ( (newnode -> task -> mem) < (AllocTableFree -> size) )
-            {
-                Task * another_one = newnode -> task;
+                to_add_to_execution (another_one, todo_list, wait_list);            // Добавляем в список на исполнение 
 
-                to_add_to_execution (another_one, todo_list, wait_list);
-
-				printMemory(Memory, Memsize);
-
-				printf("mem of another one = %d\n", another_one -> mem);
-
-				for (int j = 0; j < (another_one -> mem) ; j++)
+				for (int j = 0; j < (another_one -> mem) ; j++)  // заполняем память данной задачей
 				{
-					//printf("\nin cycle\n");
 					AllocTableFree[0].point[j] = 1;
-					//printf("adding a bit\n");
 				}
+
+                printf("Added task pid = %d to the memory:\n", another_one -> pid);
+
+                printMemory(Memory, Memsize);                                       // Печатаем память после добавления
                 	
-				another_one->taken_mem = AllocTableFree->point;
+				another_one->taken_mem = AllocTableFree->point; // записываем в структуру задачи, куда именно в памяти она была записана, чтобы впоследствии освободить её
 
 
-                another_one -> status = 1;
+                another_one -> status = 1;                      // записываем, что положили задачу в список на исполнение
 
 				//printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
 				
-                AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+                processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-                printAlloctable (AllocTableFree, Amount_of_mem_parts[1]);
+                //printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
 
-                GaySortAllocTable (AllocTableEmployed, 0, Amount_of_mem_parts[0]);  //пересортируем куски
-                GaySortAllocTable (AllocTableFree, 0, Amount_of_mem_parts[1]);      //занятой и свободной памятей
-
-                printAlloctable (AllocTableFree, Amount_of_mem_parts[1]);
-
-                Taskwaiting -= 1;
+                TaskPut += 1; // мы положили одну задачу в список на исполнение - запишем это
                 
             }
-            if (newnode -> next)
+            if (newnode_with_task -> next)  // если есть еще задачи, сразу внутри данного цикла попробуем их положить в память
                 {
-                    newnode = newnode -> next;
-                    printf("pid of new task = %d\n", newnode->task->pid);
+                    newnode_with_task = newnode_with_task -> next;
+                    //printf("pid of new task = %d\n", newnode_with_task->task->pid);
                 }
 
 			
@@ -103,20 +92,24 @@ int main()
         }
 
 
+        Taskwaiting -= TaskPut; // количество задач, ожидающих того, что их положут в очередь на исполнение, уменьшилось на TaskPut
 
+        TaskPut = 0;            // обнулим количство задач, положенных в цикле
 
-        // исполняем одну задачу
-        execution (todo_list -> head -> task, todo_list, &t);
+        execution (todo_list -> head -> task, todo_list, &t); // исполняем одну задачу
 
-        AllocTab (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+        //printf("Executed\n");
 
-        GaySortAllocTable (AllocTableEmployed, 0, Amount_of_mem_parts[0]);  //пересортируем куски
-        GaySortAllocTable (AllocTableFree, 0, Amount_of_mem_parts[1]);      //занятой и свободной памятей
+        printf("After execution:\n");
 
-		printMemory(Memory, Memsize);
+        printMemory(Memory, Memsize);   // смотрим, освободиласть ли память
 
-        // удаляем выполненную задачу из ОП и листа на исполнения
-        //to_delete_a_task (todo_list -> head -> task, todo_list);
+        processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+
+        printf("State of alloctablefree:\n");
+
+        printAlloctable(AllocTableFree, Amount_of_mem_parts[1]); // смотрим на массив свободных кусков, и можем сравнить его с состоянием памяти, напечатанным выше
+
 
         // прерывание цикла если истекло время, либо если все задачи выполнены
         if(t <= 0)
@@ -125,8 +118,6 @@ int main()
         if(wait_list -> head == 0 && wait_list -> tail == 0 && todo_list -> head ==  0 && todo_list -> tail == 0)
             break;
 
-        iteration++;
-        printf("\niteration = %d, pid of next task = %d\n", iteration, newnode->task->pid);
     }
 
 
@@ -145,7 +136,7 @@ int main()
         task_status(pid, TaskNum, StructArray);
     }
 
-    // функции полностью удаляют оба списка и таблицы
+    // функции полностью удаляют оба списка и таблицы и освобождают память
     destroyList(wait_list);
     destroyList(todo_list);
     destroyBothAllocTables(AllocTableFree, AllocTableEmployed);

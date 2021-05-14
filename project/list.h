@@ -102,12 +102,10 @@ List *  destroyList(List * lst)
 
 void deleteL(List *lst, Node * del)
 {
-//	printf("del: %p %hhu\n", del, *(del->task));
 	if(!del)
 		return;
-	if(del == lst -> head && del == lst -> tail)
+	if (del == lst -> head && del == lst -> tail)
 	{
-		//printf("head-tail\n");
 		lst -> head = 0;
 		lst -> tail = 0;
 		free(del);
@@ -117,7 +115,6 @@ void deleteL(List *lst, Node * del)
 	if ( del == lst -> head)
 	{
 		lst -> head = lst -> head -> next;
-		//printf("head: %hhu\n", *(lst -> head -> task));
 		lst -> head -> prev = 0;
 		free(del);
 		del = 0;
@@ -131,18 +128,18 @@ void deleteL(List *lst, Node * del)
 		del = 0;
 		return;
 	}
-	Node * pred, * sled;
-	pred = del -> prev;
-	sled = del -> next;
-	pred->next = sled;
-	sled->prev = pred;
+	Node * previous, * nextone;
+	previous = del -> prev;
+	nextone = del -> next;
+	previous->next = nextone;
+	nextone->prev = previous;
 	free(del);
 	del = 0;
 }
 
 //---------------------------------------------------------------------
 //создание листа с отсортирорванными областями памяти
-//и запихуивание туда элементов отсортированного массива структур
+//и засовывания туда элементов отсортированного массива структур
 //---------------------------------------------------------------------
 
 List2* MemoryList (AllocPart* AllocTable, int Size)

@@ -20,7 +20,7 @@ List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time)
 
     for(int i = 0; i < n; i++)
     {
-		if (StructArray[i].mem > Memsize)
+		if (StructArray[i].mem > Memsize) //проверка по размеру
 		{
 			StructArray[i].status = 0;
 		}
@@ -103,24 +103,15 @@ void execution (Task* to_do, List* execution, int *time)
         to_do -> time_act = 0 - *time;
     }
 
-   /*  нахуй не нужно
-   	asm ("push {r7, lr}");
-    asm ("ldr r6, [pc, #8]");
-    asm ("sub r6, #1");
-    asm ("cmp r6, #0");
-    asm ("bne execution+0x4");
-    asm ("pop {r7, pc}");
-    asm (".word 0xea60"); //60000  (here has to be time_act)
-    */
-
     to_delete_a_task(to_do, execution);
 };
 
 //--------------------------------------------------------------
-//ввод задачи
+// ввод задачи
+// Принимает на вход количество задач, возвращает массив структур Task
 //--------------------------------------------------------------
 
-Task * EnterTask (int n)  // Принимает на вход количество задач, возвращает массив структур Task
+Task * EnterTask (int n)
 {
 	Task * structArray = (Task * )calloc(1, n * sizeof(Task));
 

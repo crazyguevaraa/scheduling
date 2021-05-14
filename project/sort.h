@@ -1,20 +1,18 @@
-int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
-void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2);
-void GaySortAllocTable (AllocPart* AllocTable, int left, int right);
+int MemCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
+void MemSwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2);
+void MemSortAllocTable (AllocPart* AllocTable, int left, int right);
 int TaskCompareAllocTable (Task* Task1, Task* Task2);
 void TaskSwapAllocPart (Task* Task1, Task* Task2);
 void TaskSortAllocTable (Task* taskarr, int left, int right);
 void PrepforAddressSort (AllocPart* AllocTable, int Memsize);
 int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
-void AddressSortAllocTable (AllocPart* AllocTable, int Size);
+void AddressSortAllocTable (AllocPart* AllocTable, int left, int right);
 
 //---------испр--------------------------------------
-//компаратор для гей-сортировки
-//НАХУЙ НЕ НУЖНА
-//upd.: все таки нужна блинб(((
+//компаратор для сортировки по размеру памяти
 //--------------------------------------------------------------
 
-int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
+int MemCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 {
     int Size1 =  MemorySet1 -> size;
     int Size2 =  MemorySet2 -> size;
@@ -23,9 +21,9 @@ int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 }
 
 //-----испр-------------------------------------------------------------
-//swap двух указанных элементов для гей-сортировки
+//swap двух указанных элементов для сортировки по размеру памяти
 //----------------------------------------------------------------------
-void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
+void MemSwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 {
     AllocPart   swap_const    = *MemoryArea_1;
             	*MemoryArea_1 = *MemoryArea_2;
@@ -33,41 +31,33 @@ void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 }
 
 //---------------------------------------------------------------------
-//гей-сортировка
+// сортировкf по размеру памяти
 //---------------------------------------------------------------------
-void GaySortAllocTable (AllocPart* AllocTable, int left, int right)
+void MemSortAllocTable (AllocPart* AllocTable, int left, int right)
 {
     
     int i = left;
     int j = right;
     int pivot = (right + left) / 2;
 
-    //printf("pivot = %d\n", pivot);
-    //printf("at start: i = %d, j = %d\n", i, j);
-
     do
     {
-        //printf("\nI am here\n");
-        //printAlloctable(AllocTable, Size);
-        while(GayCompareAllocTable(AllocTable + i, AllocTable + pivot) && (i < right) )
+        while(MemCompareAllocTable(AllocTable + i, AllocTable + pivot) && (i < right) )
             i++;
-        while(GayCompareAllocTable(AllocTable + pivot, AllocTable + j) && (j > left) )
+        while(MemCompareAllocTable(AllocTable + pivot, AllocTable + j) && (j > left) )
             j--;
         if (i <= j)
         {
-            //printf("i = %d, j = %d\n", i, j);
-            GaySwapAllocPart (AllocTable + i, AllocTable + j);
-            printAlloctable(AllocTable, right - left + 1);
-            //printf("\n\n");
+            MemSwapAllocPart (AllocTable + i, AllocTable + j);
             i++;
             j--;
         }
     }
     while (i <= j);
     if (j > left)
-        GaySortAllocTable (AllocTable, left, j);
+        MemSortAllocTable (AllocTable, left, j);
     if (i < right)
-    	GaySortAllocTable (AllocTable, i, right);
+    	MemSortAllocTable (AllocTable, i, right);
 }
 
 //--------------------------------------------------------------
@@ -83,7 +73,7 @@ int TaskCompareAllocTable (Task* Task1, Task* Task2)
 }
 
 //-----испр-------------------------------------------------------------
-//swap двух указанных элементов для гей-сортировки
+//swap двух указанных элементов для сортировки задач
 //----------------------------------------------------------------------
 
 void TaskSwapAllocPart (Task* Task1, Task* Task2)
@@ -95,7 +85,7 @@ void TaskSwapAllocPart (Task* Task1, Task* Task2)
 
 
 //---------------------------------------------------------------------
-//гей-сортировка
+// сортировка задач
 //---------------------------------------------------------------------
 void TaskSortAllocTable (Task* taskarr, int left, int right)
 {
@@ -103,23 +93,16 @@ void TaskSortAllocTable (Task* taskarr, int left, int right)
     int i = left;
     int j = right;
     int pivot = (right + left) / 2;
-
-    printf("pivot = %d\n", pivot);
-    //printf("at start: i = %d, j = %d\n", i, j);
-
+  
     do
     {
-        //printf("\nI am here\n");
-        //printAlloctable(AllocTable, Size);
         while(TaskCompareAllocTable(taskarr + i, taskarr + pivot) && (i < right) )
             i++;
         while(TaskCompareAllocTable(taskarr + pivot, taskarr + j) && (j > left) )
             j--;
         if (i <= j)
         {
-            //printf("i = %d, j = %d\n", i, j);
             TaskSwapAllocPart (taskarr + i, taskarr + j);
-            //printf("\n\n");
             i++;
             j--;
         }
@@ -150,7 +133,7 @@ void PrepforAddressSort (AllocPart* AllocTable, int Memsize)
 		}
 		if (same_size != 1)										// Если кроме данного куска еще хотя бы один имеет такой же размер, сортируем
 		{
-			AddressSortAllocTable(AllocTable + i, same_size);
+			AddressSortAllocTable(AllocTable + i, 0, same_size);
 		}
 		i += same_size;											// все куски от данного до отстоящего на same_size уже отсортировали, второй раз по ним прогонять нет смысла
 	}
@@ -163,10 +146,10 @@ void PrepforAddressSort (AllocPart* AllocTable, int Memsize)
 
 int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 {
-    int address1 =  *MemorySet1 -> point;
-    int address2 =  *MemorySet2 -> point;
+    int address1 =  *(MemorySet1 -> point);
+    int address2 =  *(MemorySet2 -> point);
 
-    return (address1 > address2) - (address1 < address2);
+    return (address1 > address2);
 }
 
 //---------------------------------------------------------------------
@@ -174,23 +157,28 @@ int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 // Также как и по размеру, только компратор другой
 //---------------------------------------------------------------------
 
-void AddressSortAllocTable (AllocPart* AllocTable, int Size)
+void AddressSortAllocTable (AllocPart* AllocTable, int left, int right)
 {
-    int       i          = Size / 2;
-    AllocPart* ptr_left  = AllocTable + 1;
-    AllocPart* ptr_right = AllocTable + Size - 1;
-    AllocPart* ptr_pivot = AllocTable + i;
-
-    for(unsigned long long int k = 0, j = Size - 1; k < j; i++, j--)
+    int i = left;
+    int j = right;
+    int pivot = (right + left) / 2;
+  
+    do
     {
-        while(AddressCompareAllocTable(ptr_left, ptr_pivot))
-            ptr_left++;
-        while(AddressCompareAllocTable(ptr_pivot, ptr_right))
-            ptr_right--;
-
-        GaySwapAllocPart (ptr_left, ptr_right);
+        while(AddressCompareAllocTable(AllocTable + i, AllocTable + pivot) && (i < right) )
+            i++;
+        while(AddressCompareAllocTable(AllocTable + pivot, AllocTable + j) && (j > left) )
+            j--;
+        if (i <= j)
+        {
+            MemSwapAllocPart (AllocTable + i, AllocTable + j);
+            i++;
+            j--;
+        }
     }
-
-    AddressSortAllocTable (AllocTable, i);
-    AddressSortAllocTable (AllocTable + i, Size - i);
+    while (i <= j);
+    if (j > left)
+        AddressSortAllocTable (AllocTable, left, j);
+    if (i < right)
+    	AddressSortAllocTable (AllocTable, i, right);
 }
