@@ -1,8 +1,12 @@
-//---------------------------------------------------------------------
-//сортировка таблицы аллокаций
-//ПРИНИМАЕТ : указатель на таблицу аллокаций
-//ВОЗВРАЩАЕТ: отсортированная по размеру таблица аллокаций
-//--------------------------------------------------------------
+int GayCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
+void GaySwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2);
+void GaySortAllocTable (AllocPart* AllocTable, int left, int right);
+int TaskCompareAllocTable (Task* Task1, Task* Task2);
+void TaskSwapAllocPart (Task* Task1, Task* Task2);
+void TaskSortAllocTable (Task* taskarr, int left, int right);
+void PrepforAddressSort (AllocPart* AllocTable, int Memsize);
+int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
+void AddressSortAllocTable (AllocPart* AllocTable, int Size);
 
 //---------испр--------------------------------------
 //компаратор для гей-сортировки

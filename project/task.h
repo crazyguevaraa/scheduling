@@ -1,3 +1,41 @@
+
+void to_add_to_queue (Task* newone, List* queue);
+void to_delete_a_task (Task* to_delete, List* lst);
+void to_add_to_execution (Task* to_execute, List* lst, List* queue);
+void execution (Task* to_do, List* execution, int *time);
+Task * EnterTask (int n);
+void task_status(int pid, int n, Task * StructArray);
+List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time);
+
+
+
+//--------------------------------------------------------------
+// Создает лист на ожидание
+// Сразу выставляет статус 0 задачам, априоре невыполнимым
+//--------------------------------------------------------------
+
+List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time)
+{
+    List * tmp = createList();
+
+    for(int i = 0; i < n; i++)
+    {
+		if (StructArray[i].mem > Memsize)
+		{
+			StructArray[i].status = 0;
+		}
+		else if (StructArray[i].time_act > time)
+			 {
+			 	 StructArray[i].status = 0;
+			 }
+			 else
+        	 	to_add_to_queue(StructArray + i, tmp);
+    }
+
+    return tmp;
+};
+
+
 //--------------------------------------------------------------
 //отправка задачи в список очереди
 //--------------------------------------------------------------

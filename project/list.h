@@ -1,3 +1,13 @@
+List *createList();
+List2 *createList2();
+void insertL(List *lst, Task * task);
+void insertL2(List2 *lst, AllocPart * task);
+List *  destroyList(List * lst);
+void deleteL(List *lst, Node * del);
+List2* MemoryList (AllocPart* AllocTable, int Size);
+
+
+
 //--------------------------------------------------------------
 //создание листа задач
 //--------------------------------------------------------------
@@ -142,29 +152,3 @@ List2* MemoryList (AllocPart* AllocTable, int Size)
 		insertL2 (MemoryList, AllocTable + i);
 	return MemoryList;
 }
-
-//--------------------------------------------------------------
-// Создает лист на ожидание
-// Сразу выставляет статус 0 задачам, априоре невыполнимым
-//--------------------------------------------------------------
-
-List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time)
-{
-    List * tmp = createList();
-
-    for(int i = 0; i < n; i++)
-    {
-		if (StructArray[i].mem > Memsize)
-		{
-			StructArray[i].status = 0;
-		}
-		else if (StructArray[i].time_act > time)
-			 {
-			 	 StructArray[i].status = 0;
-			 }
-			 else
-        	 	to_add_to_queue(StructArray + i, tmp);
-    }
-
-    return tmp;
-};

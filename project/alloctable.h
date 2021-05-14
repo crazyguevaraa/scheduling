@@ -1,3 +1,13 @@
+
+
+AllocPart* create_AllocTableEmployed (int Memsize);
+AllocPart* create_AllocTableFree (int* Memory, int Memsize);
+void destroyBothAllocTables (AllocPart* AllocTableFree, AllocPart* AllocTableEmployed);
+int EnterValuesEmployed (int* Memory, int allowedMem ,AllocPart* AllocTableEmployed);
+int EnterValuesFree (int* Memory, int allowedMem ,AllocPart* AllocTableFree);
+int IsEmployed (int* Memory);
+void AllocTab (int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, int* Amount_of_mem_parts);
+
 //--------------------------------------------------------------
 // Функция, выделяющая память под AllocTableEmployed
 // Так как изначально ничего не заполнено, то изначальная память не имеет заполненных кусков
