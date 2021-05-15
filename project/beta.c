@@ -53,14 +53,14 @@ int main()
             for (int k = 0; k < Amount_of_mem_parts[1]; ) // будем обрабатывать задачи пока есть цельные куски свободной памяти потом
             {                                             // будем переформировать память
 
-                if ( newnode_with_task -> task -> mem > Memsize )
+                if ( newnode_with_task -> task -> mem > Memsize ) // проверка может ли в целом задача поместиться в память
                 {
-                    newnode_with_task -> task -> status = 5;
-                    to_delete_a_task(newnode_with_task -> task, wait_list);
+                    newnode_with_task -> task -> status = 5;      // если нет - выставляем статус - отклонена
+                    to_delete_a_task(newnode_with_task -> task, wait_list); // удаляем ее из списка на ожидания
 
-                    Taskwaiting--;
+                    Taskwaiting--;     // тогда, задач в списке ожидания на 1 меньше
 
-                    if (newnode_with_task -> next)
+                    if (newnode_with_task -> next)      // выставляем следующую задачу, если она есть, на обработку
                         newnode_with_task = newnode_with_task -> next;
                 }
                 else
