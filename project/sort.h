@@ -123,19 +123,27 @@ void TaskSortAllocTable (Task* taskarr, int left, int right)
 
 void PrepforAddressSort (AllocPart* AllocTable, int Memsize)
 {
-    for (int i = 0; i < Memsize; i++)
+
+    
+
+    for (int i = 0; i < Memsize;)
 	{
+  
 		int same_size = 1; 										// счетчик кусков с одинаковым размером, самый первый кусок сразу считаем
 
-		while ( AllocTable[i].size == AllocTable[i + 1].size)  // смотрим, является ли следующий кусок одинаковым по размеру
+        int j = i;
+
+		while ( (AllocTable[j].size == AllocTable[j + 1].size) && (i < Memsize) )  // смотрим, является ли следующий кусок одинаковым по размеру
 		{
-			same_size++;										// Если да, то увеличиваем счетчик
+			same_size++;                                            // Если да, то увеличиваем счетчик		
+            j++;					
 		}
 		if (same_size != 1)										// Если кроме данного куска еще хотя бы один имеет такой же размер, сортируем
-		{
-			AddressSortAllocTable(AllocTable + i, 0, same_size);
+		{  
+			AddressSortAllocTable(AllocTable + i, 0, same_size - 1);
 		}
-		i += same_size;											// все куски от данного до отстоящего на same_size уже отсортировали, второй раз по ним прогонять нет смысла
+        
+        i += same_size;
 	}
 }
 
@@ -146,10 +154,10 @@ void PrepforAddressSort (AllocPart* AllocTable, int Memsize)
 
 int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
 {
-    int address1 =  *(MemorySet1 -> point);
-    int address2 =  *(MemorySet2 -> point);
+    int* address1 =  (MemorySet1 -> point);
+    int* address2 =  (MemorySet2 -> point);
 
-    return (address1 > address2);
+    return (address1 < address2);
 }
 
 //---------------------------------------------------------------------
@@ -162,13 +170,20 @@ void AddressSortAllocTable (AllocPart* AllocTable, int left, int right)
     int i = left;
     int j = right;
     int pivot = (right + left) / 2;
-  
+
+
     do
     {
+        
         while(AddressCompareAllocTable(AllocTable + i, AllocTable + pivot) && (i < right) )
+        {
             i++;
+        }
         while(AddressCompareAllocTable(AllocTable + pivot, AllocTable + j) && (j > left) )
+        {
             j--;
+        }
+            
         if (i <= j)
         {
             MemSwapAllocPart (AllocTable + i, AllocTable + j);

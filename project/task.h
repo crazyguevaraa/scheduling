@@ -4,8 +4,8 @@ void to_delete_a_task (Task* to_delete, List* lst);
 void to_add_to_execution (Task* to_execute, List* lst, List* queue);
 void execution (Task* to_do, List* execution, int *time);
 Task * EnterTask (int n);
-void task_status(int pid, int n, Task * StructArray);
-List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time);
+void task_status(int n, Task * StructArray);
+List * wait_list_constructor(int n, Task * StructArray, int Memsize);
 
 
 
@@ -14,22 +14,13 @@ List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time);
 // Сразу выставляет статус 0 задачам, априоре невыполнимым
 //--------------------------------------------------------------
 
-List * wait_list_constructor(int n, Task * StructArray, int Memsize, int time)
+List * wait_list_constructor(int n, Task * StructArray, int Memsize)
 {
     List * tmp = createList();
 
     for(int i = 0; i < n; i++)
     {
-		if (StructArray[i].mem > Memsize) //проверка по размеру
-		{
-			StructArray[i].status = 0;
-		}
-		else if (StructArray[i].time_act > time)
-			 {
-			 	 StructArray[i].status = 0;
-			 }
-			 else
-        	 	to_add_to_queue(StructArray + i, tmp);
+        to_add_to_queue(StructArray + i, tmp);
     }
 
     return tmp;
@@ -128,30 +119,24 @@ Task * EnterTask (int n)
 //статус задачи
 //--------------------------------------------------------------
 
-void task_status(int pid, int n, Task * StructArray)
+void task_status(int n, Task * StructArray)
 {
-	int i = 0;
 	Task * toshow = 0;
 
-    for(i = 0; i < n; i++)
+    for(int i = 0; i < n; i++)
 	{
-        if(pid == StructArray[i].pid)
-        {
-            toshow = &StructArray[i];
-            break;
-        }
-    }
 
-	if (toshow == 0)
-		printf("Нет задачи с введенным вами идентификационным номером");
-	else
+        toshow = &StructArray[i];
+
+		printf("Статус задачи с номером = %d: ", toshow -> pid);
+    
 		switch ( toshow -> status )
 		{
 		case 0:
-			printf("не поступила в очередь\n");
+			printf("не поступила в очередь на исполнение\n");
 			break;
 		case 1:
-			printf("в очереди\n");
+			printf("в очереди на исполнение\n");
 			break;
 
 		case 2:
@@ -159,7 +144,7 @@ void task_status(int pid, int n, Task * StructArray)
 			break;
 
 		case 3:
-			printf("исполняется, %d\n", StructArray[i].time_act);
+			printf("исполняется, %d у.е. времени осталось\n", StructArray[i].time_act);
 			break;
 
 		case 4:
@@ -173,4 +158,5 @@ void task_status(int pid, int n, Task * StructArray)
 		default:
 			break;
 		}
+	}
 }
