@@ -8,11 +8,14 @@
 #include "sort.h"
 #include "alloctable.h"
 
+
 int main()
 {
     int Memsize = 0; // M - количество ячеек памяти
     int TaskNum = 0; // n - общее количество задач
     int time = 0; // t - время, на протяжении которого выполняется симуляция(в условных единицах)
+    int timefromstart = 0;
+    int if_executed = 0;
 
     scanf("%d %d %d", &Memsize, &TaskNum, &time);
 
@@ -47,11 +50,13 @@ int main()
             newnode_with_task = wait_list -> head; // поэтому newnode смотрит на нулевой указатель. Поэтому, переставляем его на первую ноду из 
         }                                          // wait_list    
             
-        
         for (int i = 0; i < Taskwaiting; i++)       // Пробегаемся по листу wait_list и смотрим, можем ли оставшиеся задачи положить в память
         {                                           // и в to_do list
-            for (int k = 0; k < Amount_of_mem_parts[1]; ) // будем обрабатывать задачи пока есть цельные куски свободной памяти потом
+            for (TaskPut = 0; TaskPut < Amount_of_mem_parts[1]; ) // Будем обрабатывать задачи пока есть цельные куски свободной памяти потом
             {                                             // будем переформировать память
+                if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
+                    break;                                                  // должна быть загружена задача, то мы её и последующие не грузим,
+                                                
 
                 if ( newnode_with_task -> task -> mem > Memsize ) // проверка может ли в целом задача поместиться в память
                 {
@@ -65,59 +70,39 @@ int main()
                 }
                 else
                 {
-                    if ( (newnode_with_task -> task -> mem) <= (AllocTableFree[k].size) )   // Смотрим, можно ли задачу положить в память,
+                    if ( (newnode_with_task -> task -> mem) <= (AllocTableFree[TaskPut].size) )   // Смотрим, можно ли задачу положить в память,
                     {                                                                       // так как AllocTableFree впоследствии сортируется, достаточно посмотреть на первый его элемент
                         
                         Task * another_one = newnode_with_task -> task;                     // Если положить можно, то вытаскиваем из ноды указатель на задачу
 
-                        to_add_to_execution (another_one, todo_list, wait_list);            // Добавляем в список на исполнение 
-
-                        for (int j = 0; j < (another_one -> mem) ; j++)  // заполняем память данной задачей
-                        {
-                            AllocTableFree[k].point[j] = 1;
-                        }
+                        to_add_to_execution (another_one, todo_list, wait_list, AllocTableFree, TaskPut);            // Добавляем в список на исполнение 
 
                         printf("Added task pid = %d to the memory:\n", another_one -> pid);
 
                         printMemory(Memory, Memsize);                                       // Печатаем память после добавления
                             
-                        another_one->taken_mem = AllocTableFree[k].point; // записываем в структуру задачи, куда именно в памяти она была записана, чтобы впоследствии освободить её
-
-
-                        another_one -> status = 1;                      // записываем, что положили задачу в список на исполнение
-
-                        //printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
-                        
-                        
-
-                        //printAlloctable(AllocTableFree, Amount_of_mem_parts[1]);
-
                         TaskPut += 1; // мы положили одну задачу в список на исполнение - запишем это
-                        
-                        
-                    
-                        k++; //если удалось положить задачу, то 
-
-                        //printf("\nk = %d, amountparts = %d\n", k, Amount_of_mem_parts[1]);
                         
                     }
                     else
                     {
-                        if (!(newnode_with_task -> next))
+                        if (!(newnode_with_task -> next))   // Если нет задач, после той, которая пока не помещается в память, идем на исполнение задач
                             break;
                     }
 
                     if (newnode_with_task -> next)  // если есть еще задачи, сразу внутри данного цикла попробуем их положить в память
                             {
                                 newnode_with_task = newnode_with_task -> next;
-                                //printf("pid of new task = %d\n", newnode_with_task->task->pid);
                             }
                 }
                 
                 
             }
+            if (TaskPut) // Если что - то положили в память то переформируем куски свободной и заянтой памяти
+                processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); 
 
-            processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+            if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
+                    break;                                              // должна быть загружена задача, то мы её и последующие не грузим,
         }
 
         Taskwaiting -= TaskPut; // количество задач, ожидающих того, что их положут в очередь на исполнение, уменьшилось на TaskPut
@@ -128,36 +113,46 @@ int main()
         
 
         if (todo_list -> head)
-            execution (todo_list -> head -> task, todo_list, &time); // исполняем одну задачу
+            if_executed = execution (todo_list -> head -> task, todo_list, &time, &timefromstart); // исполняем одну задачу
 
-        //printf("Executed\n");
 
-        printf("After execution:\n");
+        if (if_executed) // Если исполнили некую задачу
+        {
+            printf("After execution: memory state\n");
 
-        printMemory(Memory, Memsize);   // смотрим, освободиласть ли память
+            printMemory(Memory, Memsize);   // смотрим, освободиласть ли память
 
-        processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
+            processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-        printf("State of alloctablefree:\n");
+            printf("State of alloctablefree:\n");
 
-        printAlloctable(AllocTableFree, Amount_of_mem_parts[1]); // смотрим на массив свободных кусков, и можем сравнить его с состоянием памяти, напечатанным выше
+            printAlloctable(AllocTableFree, Amount_of_mem_parts[1]); // смотрим на массив свободных кусков, и можем сравнить его с состоянием памяти, напечатанным выше
+        }
+        
+
+
+        timefromstart++;
+        time--;
 
 
         // прерывание цикла если истекло время, либо если все задачи выполнены
         if(time <= 0)
         {
-            printf("time expired");
+            printf("\ntime expired\n");
             break;
         }
             
 
         if(wait_list -> head == 0 && wait_list -> tail == 0 && todo_list -> head ==  0 && todo_list -> tail == 0)
         {
-            printf("All tasks done");
+            printf("\nAll tasks done\n");
             break;
         }
-            
 
+        printf("Another tick passed: timeleft = %d, time from start = %d, Memory state:\n", time, timefromstart);
+        printMemory(Memory, Memsize);
+
+        printf("Starting new tick:\n\n");
     }
 
 

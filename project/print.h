@@ -10,7 +10,7 @@ void printAlloctable(AllocPart *Alloctable, int size);
 void printMemory (int* Memory, int size)
 {
     int i = 0;
-	printf("[");                        // Скобочки для красоты восприятия
+	printf("\n[");                        // Скобочки для красоты восприятия
 	for (i = 0; i < size - 1; i++)
 	    printf("%d, ", *(Memory + i) );
 
@@ -25,6 +25,6 @@ void printAlloctable(AllocPart *Alloctable, int size)
 {
     for (int i = 0; i < size; i++)
     {
-        printf("\nsize of %d part is %d\n",i, (Alloctable + i)->size );
+        printf("\nsize of %d part is %d\n\n",i, (Alloctable + i)->size );
     }
 }

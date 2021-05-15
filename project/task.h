@@ -1,8 +1,8 @@
 
 void to_add_to_queue (Task* newone, List* queue);
 void to_delete_a_task (Task* to_delete, List* lst);
-void to_add_to_execution (Task* to_execute, List* lst, List* queue);
-void execution (Task* to_do, List* execution, int *time);
+void to_add_to_execution (Task* to_execute, List* lst, List* queue, AllocPart* AllocTableFree, int AlloctabPlacement);
+int execution (Task* to_do, List* execution, int *time, int* timefromstart);
 Task * EnterTask (int n);
 void task_status(int n, Task * StructArray);
 List * wait_list_constructor(int n, Task * StructArray, int Memsize);
@@ -67,10 +67,15 @@ void to_delete_a_task (Task* to_delete, List* lst)
 //--------------------------------------------------------------
 // отправка задачи в список на выполнение
 //--------------------------------------------------------------
-void to_add_to_execution (Task* to_execute, List* lst, List* queue)
+void to_add_to_execution (Task* to_execute, List* lst, List* queue, AllocPart* AllocTableFree, int AlloctabPlacement)
 {
     insertL(lst, to_execute);
-    to_execute -> status = 2;    // попала в очередь исполнение
+    to_execute -> status = 1;    // попала в очередь исполнение
+	for (int j = 0; j < (to_execute -> mem) ; j++)  // заполняем память данной задачей
+		{
+			AllocTableFree[AlloctabPlacement].point[j] = 1;
+		}
+	to_execute -> taken_mem = AllocTableFree[AlloctabPlacement].point; // записываем в структуру задачи, куда именно в памяти она была записана, чтобы впоследствии освободить её
     to_delete_a_task(to_execute, queue);
 };
 
@@ -78,23 +83,33 @@ void to_add_to_execution (Task* to_execute, List* lst, List* queue)
 //выполнение задачи
 //--------------------------------------------------------------
 
-void execution (Task* to_do, List* execution, int *time)
+int execution (Task* to_do, List* execution, int *time, int* timefromstart)
 {
-	*time -= to_do -> time_act;
-
-    if(time >= 0)
+	if ( (to_do -> time_act) > 1 )
 	{
-        to_do -> status = 4;
-		for (int i = 0; i < to_do->mem; i++)
-			(to_do -> taken_mem)[i] = 0;
-	}
-    else
-    {
-        to_do -> status = 3;
-        to_do -> time_act = 0 - *time;
-    }
+		(to_do -> time_act) = (to_do -> time_act) - 1;
 
-    to_delete_a_task(to_do, execution);
+		if (*time - 1 == 0)
+		{
+			to_do -> status = 3;
+        	to_do -> time_act = 0 - *time;
+			to_delete_a_task(to_do, execution);
+		}
+
+		return 0;
+	}
+	else
+	{
+			to_do -> status = 4;
+			for (int i = 0; i < to_do->mem; i++)
+			(to_do -> taken_mem)[i] = 0;
+			to_delete_a_task(to_do, execution);
+			return 1;
+	}
+        
+
+
+    
 };
 
 //--------------------------------------------------------------
@@ -133,7 +148,7 @@ void task_status(int n, Task * StructArray)
 		switch ( toshow -> status )
 		{
 		case 0:
-			printf("не поступила в очередь на исполнение\n");
+			printf("в очереди ожидания\n");
 			break;
 		case 1:
 			printf("в очереди на исполнение\n");
