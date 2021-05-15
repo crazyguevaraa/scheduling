@@ -45,6 +45,8 @@ int main()
 
     while(1)
     {
+        printf("Starting new tick:\n\n");
+
         if (wait_list -> head)                     // При первом прогоне это просто ничего не меняет        
         {                                          // Когда уже некоторые задачи были положены в to_do list, они удаляются из wait_list
             newnode_with_task = wait_list -> head; // поэтому newnode смотрит на нулевой указатель. Поэтому, переставляем его на первую ноду из 
@@ -82,6 +84,8 @@ int main()
                         printMemory(Memory, Memsize);                                       // Печатаем память после добавления
                             
                         TaskPut += 1; // мы положили одну задачу в список на исполнение - запишем это
+
+                        Taskwaiting--; // мы положили одну задачу в список на исполнение, поэтому ожидает на 1 меньше
                         
                     }
                     else
@@ -104,8 +108,6 @@ int main()
             if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
                     break;                                              // должна быть загружена задача, то мы её и последующие не грузим,
         }
-
-        Taskwaiting -= TaskPut; // количество задач, ожидающих того, что их положут в очередь на исполнение, уменьшилось на TaskPut
 
         TaskPut = 0;            // обнулим количство задач, положенных в цикле
 
@@ -152,7 +154,7 @@ int main()
         printf("Another tick passed: timeleft = %d, time from start = %d, Memory state:\n", time, timefromstart);
         printMemory(Memory, Memsize);
 
-        printf("Starting new tick:\n\n");
+        
     }
 
 
