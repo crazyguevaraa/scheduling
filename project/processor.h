@@ -28,7 +28,7 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
 
             for (int i = 0; i < Taskwaiting; i++)       // Пробегаемся по листу wait_list и смотрим, можем ли оставшиеся задачи положить в память
             {                                           // и в to_do list
-                for (counter = 0; (counter < Amount_of_mem_parts[1]) && (Taskwaiting > 0); ) // Будем обрабатывать задачи пока есть цельные куски свободной памяти 
+                for (counter = 0; (counter < Amount_of_mem_parts[1]) && (counter < Taskwaiting); ) // Будем обрабатывать задачи пока есть цельные куски свободной памяти 
                 {                                                                            // потом будем переформировать память
                     if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
                         break;                                                  // должна быть загружена задача, то мы её и последующие не грузим,
