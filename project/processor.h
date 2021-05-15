@@ -14,6 +14,8 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
     int TaskPut = 0;                               // Количество задач, положенных в память и в список на выполнение в данной итерации цикла
 
     int Amount_of_mem_parts [2] = { 0, 1 }; // 1 элемент - количество кусков занятой памяти, 2 - количество кусков свободной памяти
+
+    int counter = 0;
         
     while(1)
         {
@@ -26,8 +28,8 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
 
             for (int i = 0; i < Taskwaiting; i++)       // Пробегаемся по листу wait_list и смотрим, можем ли оставшиеся задачи положить в память
             {                                           // и в to_do list
-                for (TaskPut = 0; TaskPut < Amount_of_mem_parts[1]; ) // Будем обрабатывать задачи пока есть цельные куски свободной памяти 
-                {                                                     // потом будем переформировать память
+                for (counter = 0; (counter < Amount_of_mem_parts[1]) && (Taskwaiting > 0); ) // Будем обрабатывать задачи пока есть цельные куски свободной памяти 
+                {                                                                            // потом будем переформировать память
                     if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
                         break;                                                  // должна быть загружена задача, то мы её и последующие не грузим,
                                                     
@@ -44,20 +46,20 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
                     }
                     else
                     {
-                        if ( (newnode_with_task -> task -> mem) <= (AllocTableFree[TaskPut].size) )   // Смотрим, можно ли задачу положить в память,
+                        if ( (newnode_with_task -> task -> mem) <= (AllocTableFree[counter].size) )   // Смотрим, можно ли задачу положить в память,
                         {                                                                       // так как AllocTableFree впоследствии сортируется, достаточно посмотреть на первый его элемент
                             
                             Task * another_one = newnode_with_task -> task;                     // Если положить можно, то вытаскиваем из ноды указатель на задачу
 
-                            to_add_to_execution (another_one, todo_list, wait_list, AllocTableFree, TaskPut);            // Добавляем в список на исполнение 
+                            to_add_to_execution (another_one, todo_list, wait_list, AllocTableFree, counter);            // Добавляем в список на исполнение 
 
                             printf("Added task pid = %d to the memory:\n", another_one -> pid);
 
                             printMemory(Memory, Memsize);                                       // Печатаем память после добавления
-                                
-                            TaskPut += 1; // мы положили одну задачу в список на исполнение, поэтому свободных кусков в Alloctable уменьшилось на 1
 
-                            Taskwaiting--; // мы положили одну задачу в список на исполнение, поэтому ожидает на 1 меньше
+                            counter++;
+                                
+                            TaskPut++; // мы положили одну задачу в список на исполнение, поэтому свободных кусков в Alloctable уменьшилось на 1
                             
                         }
                         else
@@ -74,17 +76,18 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
                     
                     
                 }
-                if (TaskPut) // Если что - то положили в память то переформируем куски свободной и заянтой памяти
+                
+                if (counter) // Если что - то положили в память то переформируем куски свободной и заянтой памяти
                     processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); 
 
                 if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
                         break;                                              // должна быть загружена следующая задача, то мы её и последующие не грузим,
             }
 
+            Taskwaiting -= TaskPut; // мы положили одну задачу в список на исполнение, поэтому ожидает на 1 меньше
+
             TaskPut = 0;            // обнулим количство задач, положенных в цикле
 
-
-            
 
             if (todo_list -> head)
                 if_executed = execution (todo_list -> head -> task, todo_list, &time, &timefromstart); // исполняем одну задачу

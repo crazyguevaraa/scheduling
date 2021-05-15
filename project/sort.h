@@ -69,7 +69,7 @@ int TaskCompareAllocTable (Task* Task1, Task* Task2)
     int queue_num1 =  Task1 -> time_wait;
     int queue_num2 =  Task2 -> time_wait;
 
-    return (queue_num1 < queue_num2);
+    return (queue_num1 <= queue_num2);
 }
 
 //-----испр-------------------------------------------------------------
