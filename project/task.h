@@ -3,8 +3,8 @@ void to_add_to_queue (Task* newone, List* queue);
 void to_delete_a_task (Task* to_delete, List* lst);
 void to_add_to_execution (Task* to_execute, List* lst, List* queue, AllocPart* AllocTableFree, int AlloctabPlacement);
 int execution (Task* to_do, List* execution, int *time, int* timefromstart);
-Task * EnterTask (int n);
-void task_status(int n, Task * StructArray);
+Task * EnterTask (FILE* input, int n);
+void ftask_status(int n, Task * StructArraym, FILE* output);
 List * wait_list_constructor(int n, Task * StructArray, int Memsize);
 
 
@@ -117,14 +117,13 @@ int execution (Task* to_do, List* execution, int *time, int* timefromstart)
 // Принимает на вход количество задач, возвращает массив структур Task
 //--------------------------------------------------------------
 
-Task * EnterTask (int n)
+Task * EnterTask (FILE* input, int n)
 {
 	Task * structArray = (Task * )calloc(1, n * sizeof(Task));
 
     for(int i = 0; i < n; i++)
     {
-	    printf ("Введите параметры задачи %d:\n", i);
-        scanf("%d %d %d %d", &structArray[i].pid, &structArray[i].mem, &structArray[i].time_act, &structArray[i].time_wait);
+        fscanf(input, "%d %d %d %d", &structArray[i].pid, &structArray[i].mem, &structArray[i].time_act, &structArray[i].time_wait);
     }
 
     return structArray;
@@ -134,7 +133,7 @@ Task * EnterTask (int n)
 //статус задачи
 //--------------------------------------------------------------
 
-void task_status(int n, Task * StructArray)
+void ftask_status(int n, Task * StructArray, FILE* output)
 {
 	Task * toshow = 0;
 
@@ -143,31 +142,31 @@ void task_status(int n, Task * StructArray)
 
         toshow = &StructArray[i];
 
-		printf("Статус задачи с номером = %d: ", toshow -> pid);
+		fprintf(output, "Статус задачи с номером = %d: ", toshow -> pid);
     
 		switch ( toshow -> status )
 		{
 		case 0:
-			printf("в очереди ожидания\n");
+			fprintf(output, "в очереди ожидания\n");
 			break;
 		case 1:
-			printf("в очереди на исполнение\n");
+			fprintf(output, "в очереди на исполнение\n");
 			break;
 
 		case 2:
-			printf("поступила на исполнение\n");
+			fprintf(output, "поступила на исполнение\n");
 			break;
 
 		case 3:
-			printf("исполняется, %d у.е. времени осталось\n", StructArray[i].time_act);
+			fprintf(output, "исполняется, %d у.е. времени осталось\n", StructArray[i].time_act);
 			break;
 
 		case 4:
-			printf("выполнена\n");
+			fprintf(output, "выполнена\n");
 			break;
 
 		case 5:
-			printf("отклонена\n");
+			fprintf(output, "отклонена\n");
 			break;
 
 		default:

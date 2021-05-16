@@ -1,8 +1,10 @@
 
-void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, List * wait_list, List * todo_list);
+int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, List * wait_list, List * todo_list, FILE* output);
 
-void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, List * wait_list, List * todo_list)
+int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocTableEmployed, AllocPart* AllocTableFree, List * wait_list, List * todo_list, FILE* output)
 {
+    
+
     int timefromstart = 0; // время с начала симуляции
     int if_executed = 0;   // флаг, что закончилось исполнение очередной задачи
 
@@ -19,7 +21,7 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
         
     while(1)
         {
-            printf("Starting new tick:\n\n");
+            fprintf(output, "Starting new tick:\n\n");
 
             if (wait_list -> head)                     // При первом прогоне это просто ничего не меняет        
             {                                          // Когда уже некоторые задачи были положены в to_do list, они удаляются из wait_list
@@ -39,7 +41,7 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
                         newnode_with_task -> task -> status = 5;      // если нет - выставляем статус - отклонена
                         to_delete_a_task(newnode_with_task -> task, wait_list); // удаляем ее из списка на ожидания
 
-                        TaskPut++;     // тогда, задач которых надо обработать на одну меньше
+                        TaskPut++;     // тогда, задач в списке ожидания на 1 меньше
 
                         if (newnode_with_task -> next)      // выставляем следующую задачу, если она есть, на обработку
                             newnode_with_task = newnode_with_task -> next;
@@ -53,11 +55,11 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
 
                             to_add_to_execution (another_one, todo_list, wait_list, AllocTableFree, counter);            // Добавляем в список на исполнение 
 
-                            printf("Added task pid = %d to the memory:\n", another_one -> pid);
+                            fprintf(output, "Added task pid = %d to the memory:\n", another_one -> pid); 
 
-                            printMemory(Memory, Memsize);                                       // Печатаем память после добавления
+                            fprintMemory(Memory, Memsize, output);                                       // Печатаем память после добавления задачи
 
-                            counter++;
+                            counter++; // увеличим счетчик добавленных зада
                                 
                             TaskPut++; // мы положили одну задачу в список на исполнение, поэтому свободных кусков в Alloctable уменьшилось на 1
                             
@@ -102,15 +104,9 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
 
             if (if_executed) // Если исполнили некую задачу
             {
-                printf("After execution: memory state\n");
-
-                printMemory(Memory, Memsize);   // смотрим, правильно ли освободиласть память
-
                 processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-                printf("State of alloctablefree:\n");
-
-                printAlloctable(AllocTableFree, Amount_of_mem_parts[1]); // смотрим на массив свободных кусков, и можем сравнить его с состоянием памяти, напечатанным выше
+                fprintStateAfterexecution (Memory, Memsize, AllocTableFree, Amount_of_mem_parts[1], output); //Печать состояния
             }
             
 
@@ -122,20 +118,22 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
             // прерывание цикла если истекло время, либо если все задачи выполнены
             if(time <= 0)
             {
-                printf("\nTime expired\n");
+                fprintf(output, "\nTime expired\n");
                 break;
             }
                 
 
             if(wait_list -> head == 0 && wait_list -> tail == 0 && todo_list -> head ==  0 && todo_list -> tail == 0)
             {
-                printf("\nAll tasks done\n");
+                fprintf(output, "\nAll tasks done\n");
                 break;
             }
 
-            printf("Another tick passed: timeleft = %d, time from start = %d, Memory state:\n", time, timefromstart);
-            printMemory(Memory, Memsize);
+            fprintf(output, "Another tick passed: timeleft = %d, time from start = %d, Memory state:\n", time, timefromstart); // Печать состояния после очередного тика
+            fprintMemory(Memory, Memsize, output);
 
             
         }
+
+    return 0;
 }
