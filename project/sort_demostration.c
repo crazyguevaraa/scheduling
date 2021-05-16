@@ -80,7 +80,7 @@ int main()
         printMemory(Memory[3], Memsize[3]);
     }
 
-    PrepforAddressSort(AllocTableFree, amountMemParts[1]);
+    AddressSort(AllocTableFree, amountMemParts[1]);
 
     printf("Теперь опять положим в начале каждого Allocpart-а 1:\n");
     for (int i = 0; i < amountMemParts[1]; i++)

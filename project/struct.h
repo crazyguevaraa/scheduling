@@ -38,7 +38,7 @@ typedef struct Nod
 }Node;
 
 //--------------------------------------------------------------
-//структура листа памяти
+//структура листа памяти с задачами
 //--------------------------------------------------------------
 
 typedef struct Lst
@@ -48,7 +48,7 @@ typedef struct Lst
 }List;
 
 
-typedef struct nod
+/*typedef struct nod
 {
 	AllocPart   *	task;
 	struct nod * next;
@@ -59,5 +59,5 @@ typedef struct lst
 {
 	Node2 *head;
 	Node2 *tail;
-}List2;
+}List2;	*/
 

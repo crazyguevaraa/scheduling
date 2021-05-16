@@ -1,10 +1,12 @@
 List *createList();
-List2 *createList2();
 void insertL(List *lst, Task * task);
-void insertL2(List2 *lst, AllocPart * task);
 List *  destroyList(List * lst);
 void deleteL(List *lst, Node * del);
-List2* MemoryList (AllocPart* AllocTable, int Size);
+
+
+/*List2 *createList2();
+void insertL2(List2 *lst, AllocPart * task);
+List2* MemoryList (AllocPart* AllocTable, int Size);*/
 
 
 
@@ -19,15 +21,7 @@ List *createList()
 }
 
 
-//--------------------------------------------------------------
-//создание листа памяти
-//--------------------------------------------------------------
 
-List2 *createList2()
-{
-	List2 * tmp = (List2 *)calloc(1, sizeof(List2 *));
-	return tmp;
-}
 
 //--------------------------------------------------------------
 //вставка задачи 
@@ -54,29 +48,7 @@ void insertL(List *lst, Task * task)
 
 };
 
-//--------------------------------------------------------------
-//вставка куска памяти в лист памяти
-//--------------------------------------------------------------
 
-void insertL2(List2 *lst, AllocPart * task)
-{
-	if( !lst -> head){
-		Node2 * newN =  (Node2 *)calloc(1, sizeof(Node2));
-		newN -> task = task;
-		newN -> prev = 0;
-		newN -> next = 0;
-		lst -> tail = newN;
-		lst -> head = newN;
-		return;
-	}
-	Node2 * p = (Node2 *)calloc(1, sizeof(Node2));
-	p -> task = task;
-	p -> next = 0;
-	p -> prev = lst -> tail;
-	lst -> tail -> next = p;
-	lst -> tail = p;
-
-}
 
 //--------------------------------------------------------------
 //удаление куска из листа памяти
@@ -137,6 +109,41 @@ void deleteL(List *lst, Node * del)
 	del = 0;
 }
 
+
+/*//--------------------------------------------------------------
+//создание листа памяти c allocpart-ами
+//--------------------------------------------------------------
+
+List2 *createList2()
+{
+	List2 * tmp = (List2 *)calloc(1, sizeof(List2 *));
+	return tmp;
+}
+
+//--------------------------------------------------------------
+//вставка куска памяти в лист памяти c allocpart-ами
+//--------------------------------------------------------------
+
+void insertL2(List2 *lst, AllocPart * task)
+{
+	if( !lst -> head){
+		Node2 * newN =  (Node2 *)calloc(1, sizeof(Node2));
+		newN -> task = task;
+		newN -> prev = 0;
+		newN -> next = 0;
+		lst -> tail = newN;
+		lst -> head = newN;
+		return;
+	}
+	Node2 * p = (Node2 *)calloc(1, sizeof(Node2));
+	p -> task = task;
+	p -> next = 0;
+	p -> prev = lst -> tail;
+	lst -> tail -> next = p;
+	lst -> tail = p;
+
+}
+
 //---------------------------------------------------------------------
 //создание листа с отсортирорванными областями памяти
 //и засовывания туда элементов отсортированного массива структур
@@ -148,4 +155,4 @@ List2* MemoryList (AllocPart* AllocTable, int Size)
 	for (int i = 0 ; i < Size ; i++)
 		insertL2 (MemoryList, AllocTable + i);
 	return MemoryList;
-}
+} */

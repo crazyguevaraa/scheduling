@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "struct.h"
+#include "list.h"
+#include "task.h"
 #include "print.h"
+#include "sort.h"
 #include "alloctable.h"
 
 
