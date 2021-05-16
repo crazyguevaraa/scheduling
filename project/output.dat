@@ -6,13 +6,25 @@ Another tick passed: timeleft = 99, time from start = 1, Memory state:
 
 Starting new tick:
 
+Added task pid = 1 to the memory, time from start = 1, memory state:
+
+[1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+After execution: memory state
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+State of alloctablefree:
+
+size of 0 part is 20
+
 Another tick passed: timeleft = 98, time from start = 2, Memory state:
 
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 Starting new tick:
 
-Added task pid = 2 to the memory:
+Added task pid = 2 to the memory, time from start = 2, memory state:
 
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
@@ -36,11 +48,11 @@ Another tick passed: timeleft = 96, time from start = 4, Memory state:
 
 Starting new tick:
 
-Added task pid = 3 to the memory:
+Added task pid = 3 to the memory, time from start = 4, memory state:
 
 [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-Added task pid = 4 to the memory:
+Added task pid = 4 to the memory, time from start = 4, memory state:
 
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -107,7 +119,7 @@ Memory state after simulation:
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 Task status:
-Статус задачи с номером = 1: отклонена
+Статус задачи с номером = 1: выполнена
 Статус задачи с номером = 2: выполнена
 Статус задачи с номером = 3: выполнена
 Статус задачи с номером = 4: выполнена

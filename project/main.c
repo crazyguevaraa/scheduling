@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     fprintfAfterSimulation(Memory, Memsize, StructArray, TaskNum, output); // печатаем состояние памяти и задач после симуляции
 
     if( !flag )
-        printf("\nEverything is alright, output written in file you gave, or in output.dat if you did not\n");
+        printf("\nEverything is alright, output written in file you gave, or in output.dat if you did not give a file for output\n");
 
     fclose(output);
 

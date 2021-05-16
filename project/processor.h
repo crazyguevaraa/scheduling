@@ -57,7 +57,7 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
 
                             to_add_to_execution (another_one, todo_list, wait_list, AllocTableFree, counter);            // Добавляем в список на исполнение 
 
-                            fprintf(output, "Added task pid = %d to the memory:\n", another_one -> pid); 
+                            fprintf(output, "Added task pid = %d to the memory, time from start = %d, memory state:\n", another_one -> pid, timefromstart); 
 
                             fprintMemory(Memory, Memsize, output);                                       // Печатаем память после добавления задачи
 
