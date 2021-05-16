@@ -23,7 +23,9 @@ int main(int argc, char** argv)
 
 	int* Memory = (int *)calloc(1, Memsize * sizeof(int));  // макет памяти, 1 единица памяти в нашей ОС - 1 int
 
-    Task * StructArray = EnterTask(input, TaskNum);                // создаем массив задач
+    Task * StructArray = EnterTask(input, TaskNum);               // создаем массив задач
+
+    fclose(input);
 
 	TaskSortAllocTable(StructArray, 0, TaskNum - 1);        // сортируем его по времени поступления в Процессор (т. е. по параметру time_wait)
 
