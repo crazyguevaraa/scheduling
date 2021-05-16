@@ -41,7 +41,9 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
                         newnode_with_task -> task -> status = 5;      // если нет - выставляем статус - отклонена
                         to_delete_a_task(newnode_with_task -> task, wait_list); // удаляем ее из списка на ожидания
 
-                        TaskPut++;     // тогда, задач в списке ожидания на 1 меньше
+                        Taskwaiting--;     // тогда, задач в списке ожидания на 1 меньше
+                        
+                        i--;
 
                         if (newnode_with_task -> next)      // выставляем следующую задачу, если она есть, на обработку
                             newnode_with_task = newnode_with_task -> next;
