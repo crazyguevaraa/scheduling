@@ -85,25 +85,25 @@ void to_add_to_execution (Task* to_execute, List* lst, List* queue, AllocPart* A
 
 int execution (Task* to_do, List* execution, int *time, int* timefromstart)
 {
-	if ( (to_do -> time_act) > 1 )
+	if ( (to_do -> time_act) > 1 )						// Если до выполнения задачи осталось меньше секунды, то она не будет выполнена за этот тик процессора
 	{
-		(to_do -> time_act) = (to_do -> time_act) - 1;
+		(to_do -> time_act) = (to_do -> time_act) - 1;  // Задача исполнялась еще один тик
 
-		if (*time - 1 == 0)
+		if (*time - 1 == 0)								// Если это последний тик процессора в симуляции
 		{
-			to_do -> status = 3;
-        	to_do -> time_act = 0 - *time;
-			to_delete_a_task(to_do, execution);
+			to_do -> status = 3;						// То выставляем статус задачи - в процессе исполнения
+			to_delete_a_task(to_do, execution);			// Удаляем ее из списка на исполнение
 		}
 
 		return 0;
 	}
-	else
+	else							    			// Если задачу можно сделать за этот тик
 	{
-			to_do -> status = 4;
-			for (int i = 0; i < to_do->mem; i++)
-			(to_do -> taken_mem)[i] = 0;
-			to_delete_a_task(to_do, execution);
+			to_do -> status = 4;					// то выставляем ей статус выполнена
+			for (int i = 0; i < to_do->mem; i++)	// Освобождаем память, занятой задачей
+				(to_do -> taken_mem)[i] = 0;
+			to_delete_a_task(to_do, execution);		// Удаляем ее из списка на исполнение
+
 			return 1;
 	}
         

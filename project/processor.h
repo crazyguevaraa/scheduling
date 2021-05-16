@@ -26,7 +26,7 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
                 newnode_with_task = wait_list -> head; // поэтому newnode смотрит на нулевой указатель. Поэтому, переставляем его на первую ноду из 
             }                                          // wait_list
 
-            for (int i = 0; i < Taskwaiting; i++)       // Пробегаемся по листу wait_list и смотрим, можем ли оставшиеся задачи положить в память
+            for (int i = 0; i < Taskwaiting; )       // Пробегаемся по листу wait_list и смотрим, можем ли оставшиеся задачи положить в память
             {                                           // и в to_do list
                 for (counter = 0; (counter < Amount_of_mem_parts[1]) && (counter < Taskwaiting); ) // Будем обрабатывать задачи пока есть цельные куски свободной памяти 
                 {                                                                            // потом будем переформировать память
@@ -39,7 +39,7 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
                         newnode_with_task -> task -> status = 5;      // если нет - выставляем статус - отклонена
                         to_delete_a_task(newnode_with_task -> task, wait_list); // удаляем ее из списка на ожидания
 
-                        Taskwaiting--;     // тогда, задач в списке ожидания на 1 меньше
+                        TaskPut++;     // тогда, задач которых надо обработать на одну меньше
 
                         if (newnode_with_task -> next)      // выставляем следующую задачу, если она есть, на обработку
                             newnode_with_task = newnode_with_task -> next;
@@ -78,7 +78,14 @@ void processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* Alloc
                 }
                 
                 if (counter) // Если что - то положили в память то переформируем куски свободной и заянтой памяти
-                    processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); 
+                {
+                    processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts);
+                    i += counter;       // Также сдвинем счетчик на количество задач, которые выполнили 
+                }
+                else
+                {
+                    i++;    //Если не смогли добавить, то сдвинем счетчик просто на 1
+                }
 
                 if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
                         break;                                              // должна быть загружена следующая задача, то мы её и последующие не грузим,

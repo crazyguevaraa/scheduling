@@ -159,6 +159,6 @@ void processMemory(int* Memory, int SizeOfMemory, AllocPart* AllocTableEmployed,
     MemSortAllocTable (AllocTableEmployed, 0, Amount_of_mem_parts[0]);  //пересортируем куски
     MemSortAllocTable (AllocTableFree, 0, Amount_of_mem_parts[1]);      //занятой и свободной памятей
 
-	PrepforAddressSort(AllocTableFree, Amount_of_mem_parts[1]);
+	AddressSort(AllocTableFree, Amount_of_mem_parts[1]);
 
 }

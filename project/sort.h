@@ -4,12 +4,12 @@ void MemSortAllocTable (AllocPart* AllocTable, int left, int right);
 int TaskCompareAllocTable (Task* Task1, Task* Task2);
 void TaskSwapAllocPart (Task* Task1, Task* Task2);
 void TaskSortAllocTable (Task* taskarr, int left, int right);
-void PrepforAddressSort (AllocPart* AllocTable, int Memsize);
+void AddressSort (AllocPart* AllocTable, int Memsize);
 int AddressCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2);
 void AddressSortAllocTable (AllocPart* AllocTable, int left, int right);
 
-//---------испр--------------------------------------
-//компаратор для сортировки по размеру памяти
+//--------------------------------------------------------------
+// компаратор для сортировки по размеру памяти
 //--------------------------------------------------------------
 
 int MemCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
@@ -20,8 +20,8 @@ int MemCompareAllocTable (AllocPart* MemorySet1, AllocPart* MemorySet2)
     return (Size1 > Size2);
 }
 
-//-----испр-------------------------------------------------------------
-//swap двух указанных элементов для сортировки по размеру памяти
+//----------------------------------------------------------------------
+// swap двух указанных элементов для сортировки по размеру памяти
 //----------------------------------------------------------------------
 void MemSwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 {
@@ -31,37 +31,37 @@ void MemSwapAllocPart (AllocPart *MemoryArea_1, AllocPart *MemoryArea_2)
 }
 
 //---------------------------------------------------------------------
-// сортировкf по размеру памяти
+// сортировка по размеру памяти
 //---------------------------------------------------------------------
 void MemSortAllocTable (AllocPart* AllocTable, int left, int right)
 {
     
-    int i = left;
-    int j = right;
-    int pivot = (right + left) / 2;
+    int i = left;                   // выставляем i на начало данного массива
+    int j = right;                  // выставляем j на конец данного массива
+    int pivot = (right + left) / 2; // в качестве опорного элемента берем средний
 
     do
     {
-        while(MemCompareAllocTable(AllocTable + i, AllocTable + pivot) && (i < right) )
-            i++;
-        while(MemCompareAllocTable(AllocTable + pivot, AllocTable + j) && (j > left) )
-            j--;
+        while(MemCompareAllocTable(AllocTable + i, AllocTable + pivot) && (i < right) ) // пробегаемся от начала масссива до опорного элемента
+            i++;                                                                        // если данный элемент больше опорного, идем дальше
+        while(MemCompareAllocTable(AllocTable + pivot, AllocTable + j) && (j > left) )  // пробегаемся от конца масссива до опорного элемента
+            j--;                                                                        // если данный элемент меньше опорного, идем дальше
         if (i <= j)
         {
-            MemSwapAllocPart (AllocTable + i, AllocTable + j);
-            i++;
-            j--;
+            MemSwapAllocPart (AllocTable + i, AllocTable + j); // меняем местами элементы массива, один из которых меньше опорного и стоит 
+            i++;                                               // раньше его, а второй больше опорного и стоит позже его
+            j--;                                               // смещаем бегунки до опорного и после на 1 ближе к опорному
         }
     }
-    while (i <= j);
-    if (j > left)
+    while (i <= j);                                            // делаем это, пока не пройдемся по всему массиву
+    if (j > left)                                              // осталось до опрного что сортировать, сортируем
         MemSortAllocTable (AllocTable, left, j);
-    if (i < right)
+    if (i < right)                                             // осталось после опрного что сортировать, сортируем
     	MemSortAllocTable (AllocTable, i, right);
 }
 
 //--------------------------------------------------------------
-//компаратор для таблицы аллокций
+// компаратор для таблицы аллокций
 //--------------------------------------------------------------
 
 int TaskCompareAllocTable (Task* Task1, Task* Task2)
@@ -72,8 +72,8 @@ int TaskCompareAllocTable (Task* Task1, Task* Task2)
     return (queue_num1 <= queue_num2);
 }
 
-//-----испр-------------------------------------------------------------
-//swap двух указанных элементов для сортировки задач
+//----------------------------------------------------------------------
+// swap двух указанных элементов для сортировки задач
 //----------------------------------------------------------------------
 
 void TaskSwapAllocPart (Task* Task1, Task* Task2)
@@ -86,6 +86,7 @@ void TaskSwapAllocPart (Task* Task1, Task* Task2)
 
 //---------------------------------------------------------------------
 // сортировка задач
+// работает по тому же принципу
 //---------------------------------------------------------------------
 void TaskSortAllocTable (Task* taskarr, int left, int right)
 {
@@ -115,13 +116,13 @@ void TaskSortAllocTable (Task* taskarr, int left, int right)
 }
 
 //-----------------------------------------------------------------------------
-// Данная фигня должна в уже отсортированном по размеру массиве AllocTable
+// Данная функция должна в уже отсортированном по размеру массиве AllocTable
 // отсортировать одинаковые по размеру куски по адресам от меньшего к большему
 // Данная функция отбирает группы кусков с одинаковым размером и отсылает их
 // на сортировку по адресу
 //-----------------------------------------------------------------------------
 
-void PrepforAddressSort (AllocPart* AllocTable, int Memsize)
+void AddressSort (AllocPart* AllocTable, int Memsize)
 {
 
     
