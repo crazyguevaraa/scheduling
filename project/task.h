@@ -2,7 +2,7 @@
 void to_add_to_queue (Task* newone, List* queue);
 void to_delete_a_task (Task* to_delete, List* lst);
 void to_add_to_execution (Task* to_execute, List* lst, List* queue, AllocPart* AllocTableFree, int AlloctabPlacement);
-int execution (Task* to_do, List* execution, int *time, int* timefromstart);
+unsigned int execution (Task* to_do, List* execution, int *time);
 Task * EnterTask (FILE* input, int n);
 void ftask_status(int n, Task * StructArraym, FILE* output);
 List * wait_list_constructor(int n, Task * StructArray, int Memsize);
@@ -83,8 +83,9 @@ void to_add_to_execution (Task* to_execute, List* lst, List* queue, AllocPart* A
 //выполнение задачи
 //--------------------------------------------------------------
 
-int execution (Task* to_do, List* execution, int *time, int* timefromstart)
+unsigned int execution (Task* to_do, List* execution, int *time)
 {
+	unsigned int pid = 0;
 	if ( (to_do -> time_act) > 1 )						// Если до выполнения задачи осталось меньше секунды, то она не будет выполнена за этот тик процессора
 	{
 		(to_do -> time_act) = (to_do -> time_act) - 1;  // Задача исполнялась еще один тик
@@ -100,11 +101,13 @@ int execution (Task* to_do, List* execution, int *time, int* timefromstart)
 	else							    			// Если задачу можно сделать за этот тик
 	{
 			to_do -> status = 4;					// то выставляем ей статус выполнена
+			pid = to_do -> pid;
+			
 			for (int i = 0; i < to_do->mem; i++)	// Освобождаем память, занятой задачей
 				(to_do -> taken_mem)[i] = 0;
 			to_delete_a_task(to_do, execution);		// Удаляем ее из списка на исполнение
-
-			return 1;
+			
+			return pid;
 	}
         
 

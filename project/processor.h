@@ -6,7 +6,7 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
     
 
     int timefromstart = 0; // время с начала симуляции
-    int if_executed = 0;   // флаг, что закончилось исполнение очередной задачи
+    int pid_of_executed = 0;   // флаг, что закончилось исполнение очередной задачи
 
 
     Node* newnode_with_task = wait_list -> head;   // Создаем ноду с очередной задачей
@@ -38,6 +38,7 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
 
                     if ( newnode_with_task -> task -> mem > Memsize ) // проверка может ли в целом задача поместиться в память
                     {
+                        fprintf (output, "\nTask with pid %d declined: takes too much memory\n", newnode_with_task -> task -> pid);
                         newnode_with_task -> task -> status = 5;      // если нет - выставляем статус - отклонена
                         to_delete_a_task(newnode_with_task -> task, wait_list); // удаляем ее из списка на ожидания
 
@@ -101,14 +102,14 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
 
 
             if (todo_list -> head)
-                if_executed = execution (todo_list -> head -> task, todo_list, &time, &timefromstart); // исполняем одну задачу
+                pid_of_executed = execution (todo_list -> head -> task, todo_list, &time); // исполняем одну задачу
 
 
-            if (if_executed) // Если исполнили некую задачу
+            if ( pid_of_executed ) // Если исполнили некую задачу
             {
                 processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts); // переформируем куски свободной и заянтой памяти
 
-                fprintStateAfterexecution (Memory, Memsize, AllocTableFree, Amount_of_mem_parts[1], output); //Печать состояния
+                fprintStateAfterexecution (Memory, Memsize, timefromstart, pid_of_executed, AllocTableFree, Amount_of_mem_parts[1], output); //Печать состояния
             }
             
 

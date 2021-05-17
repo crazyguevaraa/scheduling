@@ -2,7 +2,7 @@
 
 void fprintMemory (int* Memory, int size, FILE* output);
 void fprintAlloctable(AllocPart *Alloctable, int size, FILE* output);
-void fprintStateAfterexecution (int* Memory, int Memsize, AllocPart* AllocTableFree, int Amount_of_mem_parts, FILE* output);
+void fprintStateAfterexecution (int* Memory, int Memsize, int time, unsigned int pid, AllocPart* AllocTableFree, int Amount_of_mem_parts, FILE* output);
 void fprintfAfterSimulation (int* Memory, int Memsize, Task* StructArray, int TaskNum, FILE* output);
 
 void printMemory (int* Memory, int size);
@@ -31,13 +31,14 @@ void fprintAlloctable(AllocPart *Alloctable, int size, FILE* output)
 {
     for (int i = 0; i < size; i++)
     {
-        fprintf(output, "\nsize of %d part is %d\n\n",i, (Alloctable + i)->size );
+        fprintf(output, "\nsize of %d part is %d\n",i, (Alloctable + i)->size );
     }
+    fprintf(output, "\n");
 }
 
-void fprintStateAfterexecution (int* Memory, int Memsize, AllocPart* AllocTableFree, int Amount_of_mem_parts, FILE* output)
+void fprintStateAfterexecution (int* Memory, int Memsize, int time, unsigned int pid, AllocPart* AllocTableFree, int Amount_of_mem_parts, FILE* output)
 {
-    fprintf(output, "After execution: memory state\n");
+    fprintf(output, "After execution of %u: time from start = %d, memory state\n", pid, time);
 
     fprintMemory(Memory, Memsize, output);   // смотрим, правильно ли освободиласть память
 
