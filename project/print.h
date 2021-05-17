@@ -38,7 +38,7 @@ void fprintAlloctable(AllocPart *Alloctable, int size, FILE* output)
 
 void fprintStateAfterexecution (int* Memory, int Memsize, int time, unsigned int pid, AllocPart* AllocTableFree, int Amount_of_mem_parts, FILE* output)
 {
-    fprintf(output, "After execution of %u: time from start = %d, memory state\n", pid, time);
+    fprintf(output, "After execution of %u: time from start = %d, memory state\n", pid, time + 1);
 
     fprintMemory(Memory, Memsize, output);   // смотрим, правильно ли освободиласть память
 

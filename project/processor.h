@@ -43,8 +43,6 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
                         to_delete_a_task(newnode_with_task -> task, wait_list); // удаляем ее из списка на ожидания
 
                         Taskwaiting--;     // тогда, задач в списке ожидания на 1 меньше
-                        
-                        i--;
 
                         if (newnode_with_task -> next)      // выставляем следующую задачу, если она есть, на обработку
                             newnode_with_task = newnode_with_task -> next;
@@ -69,6 +67,8 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
                         }
                         else
                         {
+                            i++; // Если не удалось положить данную задачу, но в теории она помещается, переключаемся дальше
+
                             if (!(newnode_with_task -> next))   // Если нет задач, после той, которая пока не помещается в память, идем на исполнение задач
                                 break;
                         }
@@ -87,13 +87,14 @@ int processor(int* Memory, int Memsize, int TaskNum, int time, AllocPart* AllocT
                     processMemory (Memory, Memsize, AllocTableEmployed, AllocTableFree, Amount_of_mem_parts);
                     i += counter;       // Также сдвинем счетчик на количество задач, которые выполнили 
                 }
-                else
-                {
-                    i++;    //Если не смогли добавить, то сдвинем счетчик просто на 1
-                }
 
                 if (timefromstart < newnode_with_task -> task -> time_wait) // Если с начала симуляции прошло меньше времени, чем когда 
                         break;                                              // должна быть загружена следующая задача, то мы её и последующие не грузим,
+
+                if ( !Amount_of_mem_parts[1] )
+                {
+                    break;
+                }
             }
 
             Taskwaiting -= TaskPut; // мы положили одну задачу в список на исполнение, поэтому ожидает на 1 меньше
