@@ -1,0 +1,124 @@
+Starting new tick:
+
+Another tick passed: timeleft = 99, time from start = 1, Memory state:
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Added task pid = 1 to the memory, time from start = 1, memory state:
+
+[1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+After execution of 1: time from start = 2, memory state
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+State of alloctablefree:
+
+size of 0 part is 20
+
+Another tick passed: timeleft = 98, time from start = 2, Memory state:
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Added task pid = 2 to the memory, time from start = 2, memory state:
+
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+Another tick passed: timeleft = 97, time from start = 3, Memory state:
+
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+Starting new tick:
+
+After execution of 2: time from start = 4, memory state
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+State of alloctablefree:
+
+size of 0 part is 20
+
+Another tick passed: timeleft = 96, time from start = 4, Memory state:
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Added task pid = 3 to the memory, time from start = 4, memory state:
+
+[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Added task pid = 4 to the memory, time from start = 4, memory state:
+
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Another tick passed: timeleft = 95, time from start = 5, Memory state:
+
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Another tick passed: timeleft = 94, time from start = 6, Memory state:
+
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+After execution of 3: time from start = 7, memory state
+
+[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+State of alloctablefree:
+
+size of 0 part is 9
+
+size of 1 part is 5
+
+Another tick passed: timeleft = 93, time from start = 7, Memory state:
+
+[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Another tick passed: timeleft = 92, time from start = 8, Memory state:
+
+[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Another tick passed: timeleft = 91, time from start = 9, Memory state:
+
+[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+Another tick passed: timeleft = 90, time from start = 10, Memory state:
+
+[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Starting new tick:
+
+After execution of 4: time from start = 11, memory state
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+State of alloctablefree:
+
+size of 0 part is 20
+
+
+All tasks done
+
+Memory state after simulation:
+
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+Task status:
+Статус задачи с номером = 1: выполнена
+Статус задачи с номером = 2: выполнена
+Статус задачи с номером = 3: выполнена
+Статус задачи с номером = 4: выполнена
